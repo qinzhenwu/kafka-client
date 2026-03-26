@@ -208,21 +208,23 @@ export const useClusterStore = defineStore('cluster', {
       try {
         const connectedClientIds = await invoke<string[]>('list_connected_clusters')
         console.log('[ClusterStore] Connected client IDs from backend:', connectedClientIds)
-        console.log('[ClusterStore] Current clusters state:', this.clusters.map(c => ({ id: c.id, name: c.name, connected: c.connected })))
+        console.log('[ClusterStore] Current clusters state:', this.clusters.map(c => ({ id: c.id, name: c.name, connected: c.connected, clientId: c.clientId })))
 
         // Update connection status for all clusters
         for (const cluster of this.clusters) {
           const wasConnected = cluster.connected
           const isConnected = connectedClientIds.includes(cluster.id)
 
-          if (isConnected !== wasConnected) {
-            console.log(`[ClusterStore] Updating cluster ${cluster.name}: ${wasConnected} -> ${isConnected}`)
+          console.log(`[ClusterStore] Checking cluster ${cluster.name}: id=${cluster.id}, isConnected=${isConnected}`)
+
+          if (isConnected !== wasConnected || cluster.clientId !== cluster.id) {
+            console.log(`[ClusterStore] Updating cluster ${cluster.name}: connected ${wasConnected} -> ${isConnected}`)
             cluster.connected = isConnected
             cluster.clientId = isConnected ? cluster.id : undefined
           }
         }
 
-        console.log('[ClusterStore] After sync:', this.clusters.map(c => ({ id: c.id, name: c.name, connected: c.connected })))
+        console.log('[ClusterStore] After sync:', this.clusters.map(c => ({ id: c.id, name: c.name, connected: c.connected, clientId: c.clientId })))
       } catch (e) {
         console.error('[ClusterStore] Failed to sync connection status:', e)
       }

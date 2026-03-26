@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { NInput, NSelect, useMessage } from 'naive-ui'
 import { useClusterStore, type ClusterConfig, type ClusterItem, type ClusterInfo } from '@/stores/cluster'
+import { useTabStore } from '@/stores/tabs'
 import { useI18n } from 'vue-i18n'
 import { Plus, Pencil, X, Zap, Check } from 'lucide-vue-next'
 
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const clusterStore = useClusterStore()
+const tabStore = useTabStore()
 const message = useMessage()
 
 const defaultFormValue = (): Partial<ClusterConfig> => ({
@@ -135,7 +137,16 @@ const handleConnect = async () => {
   }
 
   try {
-    await clusterStore.connectCluster(config)
+    const clientId = await clusterStore.connectCluster(config)
+
+    // 添加集群 Tab
+    tabStore.addClusterTab({
+      clusterId: config.id,
+      clusterName: config.name,
+      clientId,
+      connected: true
+    })
+
     message.success(props.editCluster ? t('cluster.reconnectSuccess', 'Cluster reconnected successfully') : t('cluster.connectSuccess', 'Cluster connected successfully'))
     emit('success')
     emit('update:show', false)
