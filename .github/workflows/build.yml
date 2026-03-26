@@ -27,6 +27,8 @@ jobs:
             args: ''
 
     runs-on: ${{ matrix.platform }}
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -67,39 +69,16 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
-      - name: Build Tauri app
+      - name: Build Tauri app (for release)
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'KafkaClient ${{ github.ref_name }}'
-          releaseBody: 'See the assets to download and install this version.'
-          releaseDraft: true
-          prerelease: false
-          args: ${{ matrix.args }}
-
-  # Create a release when a tag is pushed
-  create-release:
-    needs: build
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Get version from tag
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: KafkaClient ${{ steps.get_version.outputs.VERSION }}
-          body: |
-            ## 🚀 KafkaClient ${{ steps.get_version.outputs.VERSION }}
+          releaseBody: |
+            ## 🚀 KafkaClient ${{ github.ref_name }}
 
             ### Downloads
             - **macOS (Apple Silicon)**: Download the `.dmg` file
@@ -108,8 +87,10 @@ jobs:
 
             ### What's Changed
             See commit history for details.
-          draft: false
+          releaseDraft: false
           prerelease: false
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          args: ${{ matrix.args }}
+
+      - name: Build Tauri app (for test)
+        if: "!startsWith(github.ref, 'refs/tags/v')"
+        run: npm run tauri build -- ${{ matrix.args }}
