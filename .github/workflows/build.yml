@@ -20,7 +20,9 @@ jobs:
       matrix:
         include:
           - platform: 'macos-latest'
-            args: '--target universal-apple-darwin'
+            args: '--target aarch64-apple-darwin'
+          - platform: 'macos-13'
+            args: ''  # x86_64 Intel Mac
           - platform: 'windows-latest'
             args: ''
           - platform: 'ubuntu-22.04'
@@ -38,11 +40,11 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libssl-dev libsasl2-dev pkg-config build-essential
 
       - name: Install dependencies (macOS only)
-        if: matrix.platform == 'macos-latest'
+        if: startsWith(matrix.platform, 'macos')
         run: |
           brew install cmake openssl pkg-config
 
-      - name: Install cmake (Windows only)
+      - name: Install dependencies (Windows only)
         if: matrix.platform == 'windows-latest'
         run: |
           choco install cmake strawberryperl -y
@@ -57,7 +59,7 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || '' }}
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -102,7 +104,8 @@ jobs:
             ## 🚀 Kafka Client ${{ steps.get_version.outputs.VERSION }}
 
             ### Downloads
-            - **macOS**: Download the `.dmg` file
+            - **macOS (Apple Silicon)**: Download the `-aarch64.dmg` file
+            - **macOS (Intel)**: Download the `-x64.dmg` file
             - **Windows**: Download the `.msi` or `.exe` file
             - **Linux**: Download the `.AppImage` or `.deb` file
 
