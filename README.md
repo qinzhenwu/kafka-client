@@ -21,8 +21,7 @@ A modern, cross-platform desktop client for Apache Kafka, built with Tauri v2 an
 
 Download the latest release from [GitHub Releases](https://github.com/qinzhenwu/kafka-client/releases):
 
-- **macOS (Apple Silicon)**: Download `-aarch64.dmg` file
-- **macOS (Intel)**: Download `-x64.dmg` file
+- **macOS (Apple Silicon)**: Download `.dmg` file
 - **Windows**: Download `.msi` or `.exe` file
 - **Linux**: Download `.AppImage` or `.deb` file
 
