@@ -15,13 +15,6 @@ A modern, cross-platform desktop client for Apache Kafka, built with Tauri v2 an
 - **Modern UI** - Clean, intuitive interface with dark/light themes
 - **i18n Support** - English and Chinese language support
 
-## Screenshots
-
-<!-- Add screenshots here -->
-| Cluster Management | Topic View | Message Consumer |
-|:---:|:---:|:---:|
-| ![Cluster](screenshots/cluster.png) | ![Topic](screenshots/topic.png) | ![Message](screenshots/message.png) |
-
 ## Installation
 
 ### Download
