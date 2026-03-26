@@ -47,7 +47,9 @@ jobs:
 
       - name: Install cmake (Windows only)
         if: matrix.platform == 'windows-latest'
-        run: choco install cmake -y
+        run: |
+          choco install cmake strawberryperl -y
+          echo "C:\Program Files\CMake\bin" >> $GITHUB_PATH
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
