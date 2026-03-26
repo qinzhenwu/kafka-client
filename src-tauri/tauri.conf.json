@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Kafka Client",
+  "productName": "KafkaClient",
   "version": "0.1.0",
   "identifier": "com.kafka.client",
   "build": {
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Kafka Client",
+        "title": "KafkaClient",
         "width": 1280,
         "height": 800,
         "resizable": true,
