@@ -40,10 +40,7 @@ jobs:
       - name: Install dependencies (macOS only)
         if: matrix.platform == 'macos-latest'
         run: |
-          brew install openssl pkg-config
-          echo "OPENSSL_DIR=$(brew --prefix openssl)" >> $GITHUB_ENV
-          echo "OPENSSL_INCLUDE_DIR=$(brew --prefix openssl)/include" >> $GITHUB_ENV
-          echo "OPENSSL_LIB_DIR=$(brew --prefix openssl)/lib" >> $GITHUB_ENV
+          brew install cmake openssl pkg-config
 
       - name: Install cmake (Windows only)
         if: matrix.platform == 'windows-latest'
