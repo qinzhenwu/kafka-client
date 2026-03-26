@@ -1,0 +1,174 @@
+/* Kafka Client - Glassmorphism Button Styles */
+/* Tech Blue Theme */
+
+:root {
+  --btn-primary: #1890ff;
+  --btn-primary-light: #40a9ff;
+  --btn-primary-dark: #096dd9;
+  --btn-success: #52c41a;
+  --btn-success-light: #73d13d;
+  --btn-warning: #faad14;
+  --btn-warning-light: #ffc53d;
+  --btn-error: #ff4d4f;
+  --btn-error-light: #ff7875;
+}
+
+/* Glass Button Base */
+.btn-glass {
+  padding: 6px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-glass:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Primary - Blue */
+.btn-glass.btn-glass-primary {
+  background: rgba(24, 144, 255, 0.65);
+  border-color: rgba(24, 144, 255, 0.85);
+  color: #fff;
+}
+
+.btn-glass.btn-glass-primary:hover {
+  background: rgba(24, 144, 255, 0.8);
+  border-color: rgba(24, 144, 255, 1);
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.35);
+}
+
+/* Success - Green */
+.btn-glass.btn-glass-success {
+  background: rgba(82, 196, 26, 0.65);
+  border-color: rgba(82, 196, 26, 0.85);
+  color: #fff;
+}
+
+.btn-glass.btn-glass-success:hover {
+  background: rgba(82, 196, 26, 0.8);
+  border-color: rgba(82, 196, 26, 1);
+  box-shadow: 0 4px 16px rgba(82, 196, 26, 0.35);
+}
+
+/* Warning - Orange */
+.btn-glass.btn-glass-warning {
+  background: rgba(250, 173, 20, 0.65);
+  border-color: rgba(250, 173, 20, 0.85);
+  color: #fff;
+}
+
+.btn-glass.btn-glass-warning:hover {
+  background: rgba(250, 173, 20, 0.8);
+  border-color: rgba(250, 173, 20, 1);
+  box-shadow: 0 4px 16px rgba(250, 173, 20, 0.35);
+}
+
+/* Error - Red */
+.btn-glass.btn-glass-error {
+  background: rgba(255, 77, 79, 0.65);
+  border-color: rgba(255, 77, 79, 0.85);
+  color: #fff;
+}
+
+.btn-glass.btn-glass-error:hover {
+  background: rgba(255, 77, 79, 0.8);
+  border-color: rgba(255, 77, 79, 1);
+  box-shadow: 0 4px 16px rgba(255, 77, 79, 0.35);
+}
+
+/* Default */
+.btn-glass.btn-glass-default {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(200, 200, 200, 0.5);
+  color: #333;
+  text-shadow: none;
+}
+
+.btn-glass.btn-glass-default:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(150, 150, 150, 0.6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Size Variants */
+.btn-glass.btn-glass-sm {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.btn-glass.btn-glass-lg {
+  padding: 10px 24px;
+  font-size: 15px;
+  border-radius: 8px;
+}
+
+/* Glass Card Style for containers */
+.card-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Glass Input Style */
+.input-glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(200, 200, 200, 0.4);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.input-glass:focus {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(24, 144, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .btn-glass {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .btn-glass:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+[data-theme="dark"] .btn-glass.btn-glass-default {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] .card-glass {
+  background: rgba(30, 30, 30, 0.7);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .input-glass {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}

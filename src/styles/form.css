@@ -1,0 +1,173 @@
+/* src/styles/form.css */
+
+/* ==================== Form Components ==================== */
+
+/* Base Input Styles */
+.n-input,
+.n-input-number,
+.n-select,
+.n-date-picker,
+.n-time-picker {
+  background: var(--bg-tertiary) !important;
+  border-radius: var(--border-radius) !important;
+}
+
+.n-input .n-input__input-el,
+.n-input .n-input__textarea-el,
+.n-input-number .n-input__input-el {
+  color: var(--text-primary) !important;
+  caret-color: var(--accent) !important;
+}
+
+.n-input .n-input__input-el::placeholder,
+.n-input .n-input__textarea-el::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Hover & Focus States */
+.n-input:not(.n-input--disabled):hover,
+.n-input-number:not(.n-input-number--disabled):hover,
+.n-select:not(.n-select--disabled):hover,
+.n-date-picker:not(.n-date-picker--disabled):hover {
+  border-color: var(--accent) !important;
+}
+
+.n-input:focus-within,
+.n-input-number:focus-within,
+.n-select:focus-within,
+.n-date-picker:focus-within {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px var(--accent-bg) !important;
+}
+
+/* Select Dropdown */
+.n-base-selection-menu {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.n-base-select-option {
+  color: var(--text-secondary) !important;
+  border-radius: 4px !important;
+  margin: 2px 4px !important;
+}
+
+.n-base-select-option:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.n-base-select-option.n-base-select-option--selected {
+  background: var(--accent-bg) !important;
+  color: var(--accent) !important;
+}
+
+.n-base-select-option.n-base-select-option--selected::after {
+  content: ' ✓';
+}
+
+/* Select Label */
+.n-select .n-base-selection-label,
+.n-select .n-base-selection-placeholder__inner {
+  color: var(--text-primary) !important;
+}
+
+/* Input Number */
+.n-input-number .n-input-number__minus,
+.n-input-number .n-input-number__add {
+  color: var(--text-muted) !important;
+  transition: color 0.15s ease !important;
+}
+
+.n-input-number .n-input-number__minus:hover,
+.n-input-number .n-input-number__add:hover {
+  color: var(--accent) !important;
+}
+
+/* Checkbox & Radio */
+.n-checkbox .n-checkbox-box,
+.n-radio .n-radio-box {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--border) !important;
+  transition: all 0.15s ease !important;
+}
+
+.n-checkbox:hover .n-checkbox-box,
+.n-radio:hover .n-radio-box {
+  border-color: var(--accent) !important;
+}
+
+.n-checkbox.n-checkbox--checked .n-checkbox-box,
+.n-radio.n-radio--checked .n-radio-box {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+.n-checkbox .n-checkbox-label,
+.n-radio .n-radio-label {
+  color: var(--text-secondary) !important;
+}
+
+/* Textarea */
+.n-input.n-input--textarea {
+  background: var(--bg-tertiary) !important;
+}
+
+.n-input.n-input--textarea .n-input__textarea-el {
+  color: var(--text-primary) !important;
+  line-height: 1.5 !important;
+}
+
+/* Disabled State */
+.n-input.n-input--disabled,
+.n-input-number.n-input-number--disabled,
+.n-select.n-select--disabled,
+.n-date-picker.n-date-picker--disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.n-input.n-input--disabled .n-input__input-el,
+.n-input.n-input--disabled .n-input__textarea-el {
+  color: var(--text-muted) !important;
+}
+
+/* Date Picker */
+.n-date-picker .n-date-picker-icon {
+  color: var(--text-muted) !important;
+}
+
+.n-date-picker .n-input {
+  background: var(--bg-tertiary) !important;
+}
+
+/* Panel styles for date picker */
+.n-date-panel {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.n-date-panel th {
+  color: var(--text-muted) !important;
+}
+
+.n-date-panel td {
+  color: var(--text-secondary) !important;
+}
+
+.n-date-panel td:hover {
+  background: var(--bg-hover) !important;
+}
+
+.n-date-panel td.n-date-panel-date--selected {
+  background: var(--accent) !important;
+  color: white !important;
+}
+
+.n-date-panel td.n-date-panel-date--current {
+  color: var(--accent) !important;
+}
