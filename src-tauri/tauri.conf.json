@@ -34,5 +34,13 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "",
+      "endpoints": [
+        "https://github.com/qinzhenwu/kafka-client/releases/latest/download/{{target}}-{{arch}}.json"
+      ]
+    }
   }
 }

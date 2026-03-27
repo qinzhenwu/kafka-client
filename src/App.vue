@@ -11,12 +11,14 @@ import { useKeyboardShortcuts } from '@/composables/useKeyboardShortcuts'
 import { listenSwitchCluster } from '@/utils/window'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api/core'
+import { check } from '@tauri-apps/plugin-updater'
 import IconSidebar from '@/layouts/IconSidebar.vue'
 import SecondSidebar from '@/layouts/SecondSidebar.vue'
 import TabBar from '@/layouts/TabBar.vue'
 import ClusterTabBar from '@/components/cluster/ClusterTabBar.vue'
 import ClusterSwitch from '@/components/cluster/ClusterSwitch.vue'
 import ClusterManager from '@/components/cluster/ClusterManager.vue'
+import UpdateDialog from '@/components/common/UpdateDialog.vue'
 import TopicDetailTab from '@/views/tabs/TopicDetailTab.vue'
 import MessageTab from '@/views/tabs/MessageTab.vue'
 import ConsumerGroupTab from '@/views/tabs/ConsumerGroupTab.vue'
@@ -35,6 +37,7 @@ const activeNav = ref<string>('topics')
 
 const showClusterSwitch = ref(false)
 const showClusterManager = ref(false)
+const showUpdateDialog = ref(false)
 
 // Tab content component mapping
 const tabComponentMap: Record<string, any> = {
@@ -202,6 +205,17 @@ onMounted(async () => {
       await clusterStore.fetchActiveClusterInfo(clientId)
     }
   }
+
+  // Check for updates on startup (silent check)
+  try {
+    const update = await check()
+    if (update) {
+      console.log('[App] Update available:', update.version)
+      showUpdateDialog.value = true
+    }
+  } catch (e) {
+    console.log('[App] Update check failed (this is normal in dev mode):', e)
+  }
 })
 
 onUnmounted(() => {
@@ -285,6 +299,9 @@ themeStore.initTheme()
             v-if="showClusterManager"
             @close="showClusterManager = false"
           />
+
+          <!-- Update Dialog -->
+          <UpdateDialog v-model:show="showUpdateDialog" />
         </div>
       </n-dialog-provider>
     </n-message-provider>

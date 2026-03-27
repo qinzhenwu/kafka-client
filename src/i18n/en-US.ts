@@ -216,5 +216,18 @@ export default {
     resetWarning: 'This will reset consumer offsets and may cause message re-processing.',
     resetSuccess: 'Offsets reset successfully',
     resetFailed: 'Failed to reset offsets'
+  },
+  updater: {
+    title: 'Software Update',
+    checking: 'Checking for updates...',
+    noUpdate: 'You are using the latest version',
+    currentVersion: 'Current Version',
+    newVersionAvailable: 'New version available',
+    releaseNotes: 'Release Notes',
+    checkFailed: 'Failed to check for updates',
+    downloading: 'Downloading...',
+    updateNow: 'Update Now',
+    checkAgain: 'Check Again',
+    hint: 'Keep your software up to date for the best experience'
   }
 }
