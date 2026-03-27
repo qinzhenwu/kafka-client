@@ -1,6 +1,6 @@
 <!-- src/views/tabs/ConsumerGroupTab.vue -->
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, onActivated } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { useClusterStore } from '@/stores/cluster'
@@ -97,9 +97,6 @@ const loadData = async () => {
 }
 
 onMounted(loadData)
-
-// Reload data when tab is activated (for keep-alive)
-onActivated(loadData)
 
 watch(() => props.tab.params.groupId, (newId, oldId) => {
   if (newId && newId !== oldId) {
