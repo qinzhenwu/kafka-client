@@ -20,7 +20,6 @@ const clusterStore = useClusterStore()
 const consumerStore = useConsumerStore()
 
 const loading = ref(false)
-const initialLoading = ref(true)
 const showResetModal = ref(false)
 
 // Use local state instead of global store state
@@ -94,7 +93,6 @@ const loadData = async () => {
     message.error(String(e))
   } finally {
     loading.value = false
-    initialLoading.value = false
   }
 }
 
@@ -113,7 +111,7 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
 <template>
   <div class="consumer-group-detail">
     <!-- Full Page Loading Overlay -->
-    <div v-if="initialLoading" class="loading-overlay">
+    <div v-if="loading" class="loading-overlay">
       <RefreshCw :size="40" :stroke-width="1.5" class="loading-spinner" />
       <span class="loading-text">{{ t('common.loading') }}</span>
     </div>
@@ -127,7 +125,7 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
           <span class="title-text">{{ tab.params.groupId }}</span>
         </div>
         <div class="header-actions">
-          <IconButton icon="refresh" :tooltip="t('tooltip.refresh')" size="small" :loading="loading" @click="loadData" />
+          <IconButton icon="refresh" :tooltip="t('tooltip.refresh')" size="small" @click="loadData" />
           <IconButton icon="reset" :tooltip="t('consumer.resetOffsets')" size="small" @click="showResetModal = true" />
         </div>
       </div>
