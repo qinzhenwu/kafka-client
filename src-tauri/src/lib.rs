@@ -15,6 +15,12 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            // When a second instance is started, focus the existing window
+            let _ = app.get_webview_window("main").and_then(|window| {
+                window.set_focus().ok()
+            });
+        }))
         .manage(Arc::new(RwLock::new(KafkaClientManager::new())))
         .manage(streaming_sessions)
         .invoke_handler(tauri::generate_handler![
