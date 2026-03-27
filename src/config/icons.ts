@@ -1,6 +1,4 @@
 import {
-  FileText,
-  Users,
   Server,
   MessageSquare,
   Download,
@@ -23,10 +21,12 @@ import {
   X,
   RotateCcw
 } from 'lucide-vue-next'
+import TopicIcon from '@/components/icons/TopicIcon.vue'
+import ConsumerGroupIcon from '@/components/icons/ConsumerGroupIcon.vue'
 
 export const icons = {
-  topic: FileText,
-  consumerGroup: Users,
+  topic: TopicIcon,
+  consumerGroup: ConsumerGroupIcon,
   cluster: Server,
   message: MessageSquare,
   consume: Download,

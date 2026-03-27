@@ -14,7 +14,8 @@ export default {
     action: 'Actions',
     settings: 'Settings',
     close: 'Close',
-    create: 'Create'
+    create: 'Create',
+    optional: 'Optional'
   },
   menu: {
     cluster: 'Cluster',
@@ -122,7 +123,20 @@ export default {
     messageCount: 'Messages',
     streaming: 'Streaming',
     detailHint: 'Message details',
-    query: 'Query'
+    query: 'Query',
+    produceMessage: 'Produce Message',
+    produceSuccess: 'Message produced successfully',
+    produceError: 'Failed to produce message',
+    send: 'Send',
+    topic: 'Topic',
+    auto: 'Auto',
+    keyPlaceholder: 'Message key (optional)',
+    valuePlaceholder: 'Message value',
+    format: 'Format',
+    formatJson: 'Format JSON',
+    headerKey: 'Key',
+    headerValue: 'Value',
+    addHeader: 'Add'
   },
   sidebar: {
     topics: 'Topics',

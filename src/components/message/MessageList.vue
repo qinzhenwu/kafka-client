@@ -30,7 +30,6 @@ const selectedMessage = ref<KafkaMessage | null>(null)
 
 // Real-time consumption controls
 const startPosition = ref<'earliest' | 'latest'>('latest')
-const pageSize = ref(100)
 
 // Partition count
 const partitionCount = ref(0)
@@ -435,8 +434,10 @@ onUnmounted(() => {
       <n-data-table
         :columns="columns"
         :data="filteredMessages"
-        :pagination="{ pageSize: pageSize }"
+        :pagination="false"
         :row-key="(row: KafkaMessage) => `${row.partition}-${row.offset}`"
+        max-height="calc(100vh - 350px)"
+        virtual-scroll
       />
     </div>
 
@@ -518,6 +519,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  height: 100%;
+  overflow: hidden;
 }
 
 .list-header {
@@ -591,7 +594,19 @@ onUnmounted(() => {
 
 .table-wrapper {
   flex: 1;
-  min-height: 300px;
+  min-height: 0;
+}
+
+.table-wrapper :deep(.n-data-table) {
+  height: 100%;
+}
+
+.table-wrapper :deep(.n-data-table-wrapper) {
+  height: 100%;
+}
+
+.table-wrapper :deep(.n-data-table-base-table-body) {
+  overflow-y: auto !important;
 }
 
 .detail-info {
@@ -709,10 +724,6 @@ onUnmounted(() => {
 
 :deep(.n-data-table-empty) {
   background: var(--bg-secondary) !important;
-}
-
-:deep(.n-pagination) {
-  margin-top: 12px;
 }
 
 :deep(.n-card) {

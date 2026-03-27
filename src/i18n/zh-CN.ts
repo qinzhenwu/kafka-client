@@ -14,7 +14,8 @@ export default {
     action: '操作',
     settings: '设置',
     close: '关闭',
-    create: '创建'
+    create: '创建',
+    optional: '可选'
   },
   menu: {
     cluster: '集群',
@@ -122,7 +123,20 @@ export default {
     messageCount: '消息数',
     streaming: '实时消费中',
     detailHint: '消息详情信息',
-    query: '查询'
+    query: '查询',
+    produceMessage: '生产消息',
+    produceSuccess: '消息发送成功',
+    produceError: '消息发送失败',
+    send: '发送',
+    topic: 'Topic',
+    auto: '自动',
+    keyPlaceholder: '消息 Key (可选)',
+    valuePlaceholder: '消息内容',
+    format: '格式',
+    formatJson: '格式化 JSON',
+    headerKey: 'Key',
+    headerValue: 'Value',
+    addHeader: '添加'
   },
   sidebar: {
     topics: 'Topics',
