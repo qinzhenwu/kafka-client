@@ -158,9 +158,9 @@ const confirmDelete = async () => {
 
 <template>
   <div class="topic-detail">
-    <!-- Loading State -->
-    <div v-if="loading && !topicInfo" class="loading-state">
-      <RefreshCw :size="32" :stroke-width="1.5" class="loading-spinner" />
+    <!-- Full Page Loading Overlay -->
+    <div v-if="loading" class="loading-overlay">
+      <RefreshCw :size="40" :stroke-width="1.5" class="loading-spinner" />
       <span class="loading-text">{{ t('common.loading') }}</span>
     </div>
 
@@ -173,7 +173,7 @@ const confirmDelete = async () => {
           <span class="title-text">{{ tab.params.topicName }}</span>
         </div>
         <div class="header-actions">
-          <IconButton :icon="loading ? 'refresh' : 'refresh'" :tooltip="t('tooltip.refresh')" size="small" :loading="loading" @click="loadTopicInfo" />
+          <IconButton icon="refresh" :tooltip="t('tooltip.refresh')" size="small" @click="loadTopicInfo" />
           <IconButton icon="message" :tooltip="t('tooltip.viewMessages')" size="small" @click="handleViewMessages" />
           <IconButton icon="send" :tooltip="t('tooltip.sendMessage')" size="small" @click="handleSendTest" />
           <IconButton icon="edit" :tooltip="t('tooltip.edit')" size="small" @click="handleEdit" />
@@ -247,7 +247,9 @@ const confirmDelete = async () => {
 
 <style scoped>
 .topic-detail {
+  position: relative;
   padding: 0;
+  min-height: 100%;
 }
 
 .detail-header {
@@ -333,13 +335,16 @@ const confirmDelete = async () => {
   border-bottom: none;
 }
 
-.loading-state {
+.loading-overlay {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 300px;
   gap: 16px;
+  background: var(--bg-primary);
+  z-index: 10;
 }
 
 .loading-spinner {
