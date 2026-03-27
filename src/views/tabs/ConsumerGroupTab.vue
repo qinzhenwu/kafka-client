@@ -1,6 +1,6 @@
 <!-- src/views/tabs/ConsumerGroupTab.vue -->
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onActivated } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { useClusterStore } from '@/stores/cluster'
@@ -22,8 +22,13 @@ const consumerStore = useConsumerStore()
 const loading = ref(false)
 const showResetModal = ref(false)
 
-const groupInfo = computed(() => consumerStore.selectedGroup)
-const lagInfo = computed(() => consumerStore.lagInfo)
+// Use local state instead of global store state
+const localGroupInfo = ref(consumerStore.selectedGroup)
+const localLagInfo = ref<LagInfo[]>([])
+
+// Use local state for computed
+const groupInfo = computed(() => localGroupInfo.value)
+const lagInfo = computed(() => localLagInfo.value)
 
 // Compute total lag
 const totalLag = computed(() => {
@@ -80,8 +85,10 @@ const loadData = async () => {
   if (!clusterStore.activeClusterId || !props.tab.params.groupId) return
   loading.value = true
   try {
-    await consumerStore.getGroupInfo(clusterStore.activeClusterId, props.tab.params.groupId)
-    await consumerStore.getGroupLag(clusterStore.activeClusterId, props.tab.params.groupId)
+    const info = await consumerStore.getGroupInfo(clusterStore.activeClusterId, props.tab.params.groupId)
+    localGroupInfo.value = info
+    const lag = await consumerStore.getGroupLag(clusterStore.activeClusterId, props.tab.params.groupId)
+    localLagInfo.value = lag
   } catch (e: unknown) {
     message.error(String(e))
   } finally {
@@ -91,7 +98,14 @@ const loadData = async () => {
 
 onMounted(loadData)
 
-watch(() => props.tab.params.groupId, loadData)
+// Reload data when tab is activated (for keep-alive)
+onActivated(loadData)
+
+watch(() => props.tab.params.groupId, (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    loadData()
+  }
+})
 </script>
 
 <template>
