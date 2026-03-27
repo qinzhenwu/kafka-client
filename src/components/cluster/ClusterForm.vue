@@ -92,11 +92,26 @@ const requiresSasl = computed(() =>
 
 const isEditing = computed(() => !!props.editCluster)
 
-const handleTestConnection = async () => {
+// 验证表单
+const validateForm = () => {
+  if (!formValue.value.name) {
+    message.warning(t('cluster.nameRequired', 'Cluster name is required'))
+    return false
+  }
   if (!formValue.value.bootstrap_servers) {
     message.warning(t('cluster.bootstrapServersRequired', 'Bootstrap servers is required'))
-    return
+    return false
   }
+  // SASL 机制在 SASL_PLAINTEXT 和 SASL_SSL 时必填
+  if (requiresSasl.value && !formValue.value.sasl_mechanism) {
+    message.warning(t('cluster.saslMechanismRequired', 'SASL mechanism is required for SASL_PLAINTEXT and SASL_SSL'))
+    return false
+  }
+  return true
+}
+
+const handleTestConnection = async () => {
+  if (!validateForm()) return
 
   testingConnection.value = true
   connectionTested.value = false
@@ -126,6 +141,8 @@ const handleTestConnection = async () => {
 }
 
 const handleConnect = async () => {
+  if (!validateForm()) return
+
   const config: ClusterConfig = {
     id: props.editCluster?.config.id || crypto.randomUUID(),
     name: formValue.value.name || '',
@@ -157,6 +174,8 @@ const handleConnect = async () => {
 }
 
 const handleSave = () => {
+  if (!validateForm()) return
+
   const config: ClusterConfig = {
     id: props.editCluster?.config.id || crypto.randomUUID(),
     name: formValue.value.name || '',
@@ -236,7 +255,7 @@ const handleClose = () => {
           </div>
 
           <div class="form-row">
-            <label class="form-label">{{ t('cluster.saslMechanism', 'SASL Mechanism') }}</label>
+            <label class="form-label">{{ t('cluster.saslMechanism', 'SASL Mechanism') }}<span class="required">*</span></label>
             <n-select
               v-model:value="formValue.sasl_mechanism"
               :options="saslMechanisms"
