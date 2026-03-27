@@ -20,6 +20,7 @@ const clusterStore = useClusterStore()
 const consumerStore = useConsumerStore()
 
 const loading = ref(false)
+const initialLoading = ref(true)
 const showResetModal = ref(false)
 
 // Use local state instead of global store state
@@ -93,6 +94,7 @@ const loadData = async () => {
     message.error(String(e))
   } finally {
     loading.value = false
+    initialLoading.value = false
   }
 }
 
@@ -110,9 +112,9 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
 
 <template>
   <div class="consumer-group-detail">
-    <!-- Loading State -->
-    <div v-if="loading && !groupInfo" class="loading-state">
-      <RefreshCw :size="32" :stroke-width="1.5" class="loading-spinner" />
+    <!-- Full Page Loading Overlay -->
+    <div v-if="initialLoading" class="loading-overlay">
+      <RefreshCw :size="40" :stroke-width="1.5" class="loading-spinner" />
       <span class="loading-text">{{ t('common.loading') }}</span>
     </div>
 
@@ -213,7 +215,9 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
 
 <style scoped>
 .consumer-group-detail {
+  position: relative;
   padding: 0;
+  min-height: 100%;
 }
 
 .detail-header {
@@ -382,13 +386,16 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
   color: var(--warning);
 }
 
-.loading-state {
+.loading-overlay {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 300px;
   gap: 16px;
+  background: var(--bg-primary);
+  z-index: 10;
 }
 
 .loading-spinner {
