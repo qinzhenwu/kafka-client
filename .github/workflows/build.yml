@@ -80,6 +80,11 @@ jobs:
           releaseBody: |
             ## 🚀 KafkaClient ${{ github.ref_name }}
 
+            ### 系统要求 / System Requirements
+            - **macOS**: macOS 10.15 (Catalina) 或更高版本
+            - **Windows**: Windows 10 (1803+) 或 Windows 11
+            - **Linux**: Ubuntu 18.04+ 或其他主流发行版
+
             ### Downloads
             - **macOS (Apple Silicon)**: Download the `.dmg` file
             - **Windows**: Download the `.msi` or `.exe` file
