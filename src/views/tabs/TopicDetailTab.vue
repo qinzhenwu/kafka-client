@@ -184,15 +184,15 @@ const confirmDelete = async () => {
       <!-- Stats Cards -->
       <div class="stats-row">
         <div class="stat-card">
-          <span class="stat-label">Partitions</span>
+          <span class="stat-label">{{ t('topic.partitions') }}</span>
           <span class="stat-value">{{ topicInfo?.partitions?.length || 0 }}</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Replication</span>
+          <span class="stat-label">{{ t('topic.replication') }}</span>
           <span class="stat-value">{{ topicInfo?.partitions?.[0]?.replicas?.length || 1 }}</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Messages</span>
+          <span class="stat-label">{{ t('topic.messages') }}</span>
           <span class="stat-value">{{ formatNumber(totalMessages) }}</span>
         </div>
       </div>
@@ -200,10 +200,10 @@ const confirmDelete = async () => {
       <!-- Partition Table -->
       <div class="partition-table">
         <div class="table-header">
-          <span>Partition</span>
-          <span>Leader</span>
-          <span>ISR</span>
-          <span>Offset</span>
+          <span>{{ t('topic.partition') }}</span>
+          <span>{{ t('topic.leader') }}</span>
+          <span>{{ t('topic.isr') }}</span>
+          <span>{{ t('topic.offset') }}</span>
         </div>
         <div
           v-for="partition in topicInfo?.partitions"
