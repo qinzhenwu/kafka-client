@@ -37,6 +37,7 @@ export default {
     manageClusters: 'Manage Clusters',
     noClusters: 'No clusters configured',
     connect: 'Connect',
+    connecting: 'Connecting',
     disconnect: 'Disconnect',
     clusterCount: '{count} cluster(s)',
     confirmDelete: 'Delete Cluster',

@@ -6,7 +6,7 @@ import { useClusterStore, type ClusterItem } from '@/stores/cluster'
 import { useTabStore } from '@/stores/tabs'
 import ClusterForm from '@/components/cluster/ClusterForm.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import { Server, Plus, X } from 'lucide-vue-next'
+import { Server, Plus, X, Loader2 } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const message = useMessage()
@@ -21,10 +21,12 @@ const showForm = ref(false)
 const editingCluster = ref<ClusterItem | null>(null)
 const showDeleteConfirm = ref(false)
 const pendingDeleteClusterId = ref<string | null>(null)
+const connectingClusterId = ref<string | null>(null)
 
 const handleConnect = async (clusterId: string) => {
   const cluster = clusterStore.clusters.find(c => c.id === clusterId)
   if (cluster) {
+    connectingClusterId.value = clusterId
     try {
       const clientId = await clusterStore.connectCluster(cluster.config)
       // 添加集群 Tab
@@ -37,6 +39,8 @@ const handleConnect = async (clusterId: string) => {
       message.success(t('cluster.connectSuccess'))
     } catch (e: unknown) {
       message.error(t('cluster.connectFailed') + ': ' + String(e))
+    } finally {
+      connectingClusterId.value = null
     }
   }
 }
@@ -123,9 +127,13 @@ const clusterCount = computed(() => clusterStore.clusters.length)
                 <button class="action-btn" @click="handleDisconnect(cluster.clientId!)">{{ t('cluster.disconnect') }}</button>
               </template>
               <template v-else>
-                <button class="action-btn primary" @click="handleConnect(cluster.id)">{{ t('cluster.connect') }}</button>
-                <button class="action-btn" @click="handleEdit(cluster.id)">{{ t('common.edit') }}</button>
-                <button class="action-btn danger" @click="handleDelete(cluster.id)">{{ t('common.delete') }}</button>
+                <button class="action-btn primary" :disabled="connectingClusterId === cluster.id" @click="handleConnect(cluster.id)">
+                  <Loader2 v-if="connectingClusterId === cluster.id" :size="12" class="loading-spinner" />
+                  <span v-if="connectingClusterId === cluster.id">{{ t('cluster.connecting') }}</span>
+                  <span v-else>{{ t('cluster.connect') }}</span>
+                </button>
+                <button class="action-btn" :disabled="connectingClusterId === cluster.id" @click="handleEdit(cluster.id)">{{ t('common.edit') }}</button>
+                <button class="action-btn danger" :disabled="connectingClusterId === cluster.id" @click="handleDelete(cluster.id)">{{ t('common.delete') }}</button>
               </template>
             </div>
           </div>
@@ -285,9 +293,17 @@ const clusterCount = computed(() => clusterStore.clusters.length)
   font-size: 11px;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.action-btn:hover {
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn:hover:not(:disabled) {
   background: var(--bg-hover);
   color: var(--text-primary);
 }
@@ -297,8 +313,25 @@ const clusterCount = computed(() => clusterStore.clusters.length)
   color: white;
 }
 
+.action-btn.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
 .action-btn.danger {
   color: var(--error);
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .card-body {

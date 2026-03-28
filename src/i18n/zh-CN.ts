@@ -37,6 +37,7 @@ export default {
     manageClusters: '管理集群',
     noClusters: '暂无集群配置',
     connect: '连接',
+    connecting: '连接中',
     disconnect: '断开',
     clusterCount: '{count} 个集群配置',
     confirmDelete: '确认删除',
