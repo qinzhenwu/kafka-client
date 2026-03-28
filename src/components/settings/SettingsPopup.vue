@@ -35,7 +35,7 @@ const handleAbout = () => {
   showAboutDialog.value = true
 }
 
-const appVersion = '0.2.1'
+const appVersion = '0.2.4'
 </script>
 
 <template>
