@@ -35,9 +35,6 @@
       "icons/icon.ico"
     ],
     "windows": {
-      "webviewInstallMode": {
-        "type": "offlineInstaller"
-      },
       "wix": {
         "language": "zh-CN"
       }
