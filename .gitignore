@@ -32,5 +32,8 @@ lerna-debug.log*
 # Temp files
 temp/
 
+# Signing keys (never commit)
+keys/
+
 # Claude Code
 .claude/

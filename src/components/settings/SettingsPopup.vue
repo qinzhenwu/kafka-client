@@ -18,10 +18,7 @@ const checking = ref(false)
 const handleCheckUpdate = async () => {
   checking.value = true
   try {
-    // 使用 insecure 选项跳过签名验证（应用未签名）
-    const update = await check({
-      dangerousInsecureTransport: true
-    })
+    const update = await check()
     checking.value = false
     if (update) {
       showUpdateDialog.value = true
@@ -38,7 +35,7 @@ const handleAbout = () => {
   showAboutDialog.value = true
 }
 
-const appVersion = '0.2.5'
+const appVersion = '0.2.6'
 </script>
 
 <template>

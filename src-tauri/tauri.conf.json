@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "KafkaClient",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "identifier": "com.kafka.client",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -42,6 +42,7 @@
   },
   "plugins": {
     "updater": {
+      "pubkey": "L7u2ymRP5zEQ5HIikyS6pP5sE1SAJmbdnQueLD++Nnw=",
       "endpoints": [
         "https://github.com/qinzhenwu/kafka-client/releases/latest/download/{{target}}-{{arch}}.json"
       ]
