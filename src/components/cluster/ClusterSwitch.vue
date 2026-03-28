@@ -2,11 +2,13 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useMessage } from 'naive-ui'
 import { useClusterStore } from '@/stores/cluster'
 import { useTabStore } from '@/stores/tabs'
 import { focusClusterWindow } from '@/utils/window'
 
 const { t } = useI18n()
+const message = useMessage()
 const clusterStore = useClusterStore()
 const tabStore = useTabStore()
 
@@ -56,8 +58,10 @@ const handleSwitchCluster = async (clusterId: string) => {
         connected: true
       })
       console.log('[ClusterSwitch] Tab added, activeClientId:', tabStore.activeClientId)
+      message.success(t('cluster.connectSuccess'))
     } catch (e) {
       console.error('Failed to connect cluster:', e)
+      message.error(t('cluster.connectFailed') + ': ' + String(e))
     }
   } else {
     // 已连接，检查是否在当前窗口的 Tab 中
