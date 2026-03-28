@@ -236,5 +236,8 @@ export default {
     updateNow: '立即更新',
     checkAgain: '重新检查',
     hint: '保持软件更新以获得最佳体验'
+  },
+  settings: {
+    about: '关于'
   }
 }

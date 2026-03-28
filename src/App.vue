@@ -18,6 +18,7 @@ import TabBar from '@/layouts/TabBar.vue'
 import ClusterTabBar from '@/components/cluster/ClusterTabBar.vue'
 import ClusterSwitch from '@/components/cluster/ClusterSwitch.vue'
 import ClusterManager from '@/components/cluster/ClusterManager.vue'
+import SettingsPopup from '@/components/settings/SettingsPopup.vue'
 import UpdateDialog from '@/components/common/UpdateDialog.vue'
 import TopicDetailTab from '@/views/tabs/TopicDetailTab.vue'
 import MessageTab from '@/views/tabs/MessageTab.vue'
@@ -37,6 +38,7 @@ const activeNav = ref<string>('topics')
 
 const showClusterSwitch = ref(false)
 const showClusterManager = ref(false)
+const showSettings = ref(false)
 const showUpdateDialog = ref(false)
 
 // Tab content component mapping
@@ -88,12 +90,23 @@ const handleOpenClusterManager = () => {
   showClusterManager.value = true
 }
 
+const handleOpenSettings = () => {
+  console.log('[App] Opening settings')
+  showSettings.value = true
+}
+
+const handleCloseSettings = () => {
+  showSettings.value = false
+}
+
 // Handle escape key to close popups
 const handleEscapeKey = () => {
   if (showClusterManager.value) {
     showClusterManager.value = false
   } else if (showClusterSwitch.value) {
     showClusterSwitch.value = false
+  } else if (showSettings.value) {
+    showSettings.value = false
   }
 }
 
@@ -245,6 +258,7 @@ themeStore.initTheme()
             :active-nav="activeNav"
             @navigate="handleNavigate"
             @open-cluster-switch="handleOpenClusterSwitch"
+            @open-settings="handleOpenSettings"
           />
 
           <!-- Secondary Sidebar -->
@@ -291,6 +305,13 @@ themeStore.initTheme()
                 @close="handleCloseClusterSwitch"
                 @open-manager="handleOpenClusterManager"
               />
+            </div>
+          </div>
+
+          <!-- Settings Popup -->
+          <div v-if="showSettings" class="cluster-popup-overlay" @click="handleCloseSettings">
+            <div class="settings-popup-container" @click.stop>
+              <SettingsPopup @close="handleCloseSettings" />
             </div>
           </div>
 
@@ -356,5 +377,11 @@ themeStore.initTheme()
   position: absolute;
   left: calc(var(--icon-sidebar-width) + 8px);
   bottom: 16px;
+}
+
+.settings-popup-container {
+  position: absolute;
+  left: calc(var(--icon-sidebar-width) + 8px);
+  bottom: 70px;
 }
 </style>

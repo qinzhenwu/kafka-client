@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useClusterStore } from '@/stores/cluster'
 import { useTabStore } from '@/stores/tabs'
 import IconButton from '@/components/common/IconButton.vue'
-import { Server } from 'lucide-vue-next'
+import { Server, Settings } from 'lucide-vue-next'
 import type { IconName } from '@/config/icons'
 
 interface NavItem {
@@ -25,6 +25,7 @@ const { activeNav } = defineProps<{
 const emit = defineEmits<{
   navigate: [key: string]
   openClusterSwitch: []
+  openSettings: []
 }>()
 
 const navItems: NavItem[] = [
@@ -81,7 +82,13 @@ const handleNavClick = (key: string) => {
     </div>
 
     <!-- Cluster switcher at bottom -->
-    <div class="cluster-switcher">
+    <div class="bottom-section">
+      <!-- Settings button -->
+      <div class="settings-btn" :title="t('common.settings')" @click="emit('openSettings')">
+        <Settings :size="18" :stroke-width="1.5" />
+      </div>
+
+      <!-- Cluster switcher -->
       <div
         class="cluster-icon"
         :title="clusterTooltip"
@@ -122,6 +129,32 @@ const handleNavClick = (key: string) => {
 .cluster-switcher {
   padding-top: 12px;
   border-top: 1px solid var(--border);
+}
+
+.bottom-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.settings-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .cluster-icon {

@@ -236,5 +236,8 @@ export default {
     updateNow: 'Update Now',
     checkAgain: 'Check Again',
     hint: 'Keep your software up to date for the best experience'
+  },
+  settings: {
+    about: 'About'
   }
 }
