@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useMessage } from 'naive-ui'
 import { useClusterStore, type ClusterItem } from '@/stores/cluster'
 import { useTabStore } from '@/stores/tabs'
 import ClusterForm from '@/components/cluster/ClusterForm.vue'
@@ -8,6 +9,7 @@ import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Server, Plus, X } from 'lucide-vue-next'
 
 const { t } = useI18n()
+const message = useMessage()
 const clusterStore = useClusterStore()
 const tabStore = useTabStore()
 
@@ -23,14 +25,19 @@ const pendingDeleteClusterId = ref<string | null>(null)
 const handleConnect = async (clusterId: string) => {
   const cluster = clusterStore.clusters.find(c => c.id === clusterId)
   if (cluster) {
-    const clientId = await clusterStore.connectCluster(cluster.config)
-    // 添加集群 Tab
-    tabStore.addClusterTab({
-      clusterId: cluster.id,
-      clusterName: cluster.name,
-      clientId,
-      connected: true
-    })
+    try {
+      const clientId = await clusterStore.connectCluster(cluster.config)
+      // 添加集群 Tab
+      tabStore.addClusterTab({
+        clusterId: cluster.id,
+        clusterName: cluster.name,
+        clientId,
+        connected: true
+      })
+      message.success(t('cluster.connectSuccess'))
+    } catch (e: unknown) {
+      message.error(t('cluster.connectFailed') + ': ' + String(e))
+    }
   }
 }
 

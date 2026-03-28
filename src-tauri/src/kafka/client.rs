@@ -38,7 +38,8 @@ impl KafkaClientManager {
         let rdkafka_config = config.to_rdkafka_config();
 
         // Create admin client
-        let admin: AdminClient<_> = rdkafka_config.create()?;
+        let admin: AdminClient<_> = rdkafka_config.create()
+            .map_err(|e| KafkaClientError::Connection(format!("Failed to create admin client: {}", e)))?;
 
         // Create consumer - use unique group id per session to avoid conflicts
         // but with auto commit disabled, offsets are never persisted
@@ -47,16 +48,29 @@ impl KafkaClientManager {
         consumer_config.set("enable.auto.commit", "false");
         consumer_config.set("enable.auto.offset.store", "false");
         consumer_config.set("auto.offset.reset", "earliest");
-        let consumer: BaseConsumer = consumer_config.create()?;
+        let consumer: BaseConsumer = consumer_config.create()
+            .map_err(|e| KafkaClientError::Connection(format!("Failed to create consumer: {}", e)))?;
 
         // Create producer
-        let producer: BaseProducer = config.to_rdkafka_config().create()?;
+        let producer: BaseProducer = config.to_rdkafka_config().create()
+            .map_err(|e| KafkaClientError::Connection(format!("Failed to create producer: {}", e)))?;
+
+        // Wrap in Arc
+        let admin = Arc::new(admin);
+        let consumer = Arc::new(consumer);
+        let producer = Arc::new(producer);
+
+        // Verify connection by fetching cluster metadata
+        use crate::kafka::KafkaAdminOps;
+        let admin_ops = KafkaAdminOps::new(&admin, &consumer);
+        admin_ops.get_cluster_info().await
+            .map_err(|e| KafkaClientError::Connection(format!("Failed to connect to cluster: {}", e)))?;
 
         let client = KafkaClient {
             config,
-            admin: Arc::new(admin),
-            consumer: Arc::new(consumer),
-            producer: Arc::new(producer),
+            admin,
+            consumer,
+            producer,
         };
 
         let mut clients = self.clients.write().await;
@@ -79,6 +93,16 @@ impl KafkaClientManager {
     pub async fn list_clients(&self) -> Vec<String> {
         let clients = self.clients.read().await;
         clients.keys().cloned().collect()
+    }
+
+    pub async fn restore_connections(&self, configs: &[ClusterConfig]) -> Vec<(String, Result<String>)> {
+        let mut results = Vec::new();
+        for config in configs {
+            let name = config.name.clone();
+            let result = self.connect(config.clone()).await;
+            results.push((name, result));
+        }
+        results
     }
 
     /// Test connection to a cluster without persisting it
