@@ -11,10 +11,6 @@ import { RefreshCw, Info } from 'lucide-vue-next'
 const { t } = useI18n()
 const message = useMessage()
 
-const emit = defineEmits<{
-  close: []
-}>()
-
 const showUpdateDialog = ref(false)
 const showAboutDialog = ref(false)
 const checking = ref(false)
