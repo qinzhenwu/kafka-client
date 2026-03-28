@@ -1,11 +1,12 @@
 <!-- src/components/cluster/ClusterSwitch.vue -->
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { useClusterStore } from '@/stores/cluster'
 import { useTabStore } from '@/stores/tabs'
 import { focusClusterWindow } from '@/utils/window'
+import { Loader2 } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const message = useMessage()
@@ -16,6 +17,8 @@ const emit = defineEmits<{
   close: []
   'open-manager': []
 }>()
+
+const connectingClusterId = ref<string | null>(null)
 
 // 打开时同步连接状态
 onMounted(async () => {
@@ -33,8 +36,8 @@ const sortedClusters = computed(() => {
 })
 
 const handleSwitchCluster = async (clusterId: string) => {
-  // 先关闭弹窗，再执行连接操作
-  emit('close')
+  // 如果正在连接其他集群，不允许操作
+  if (connectingClusterId.value) return
 
   const cluster = clusterStore.clusters.find(c => c.id === clusterId)
   if (!cluster) {
@@ -46,6 +49,7 @@ const handleSwitchCluster = async (clusterId: string) => {
 
   // 如果未连接，先连接
   if (!cluster.connected) {
+    connectingClusterId.value = clusterId
     try {
       console.log('[ClusterSwitch] Connecting to cluster...')
       const clientId = await clusterStore.connectCluster(cluster.config)
@@ -59,9 +63,12 @@ const handleSwitchCluster = async (clusterId: string) => {
       })
       console.log('[ClusterSwitch] Tab added, activeClientId:', tabStore.activeClientId)
       message.success(t('cluster.connectSuccess'))
+      emit('close')
     } catch (e) {
       console.error('Failed to connect cluster:', e)
       message.error(t('cluster.connectFailed') + ': ' + String(e))
+    } finally {
+      connectingClusterId.value = null
     }
   } else {
     // 已连接，检查是否在当前窗口的 Tab 中
@@ -91,6 +98,7 @@ const handleSwitchCluster = async (clusterId: string) => {
       }
       // 如果 result 是 'main-window' 或 'cluster-window'，说明成功聚焦了对应窗口
     }
+    emit('close')
   }
 }
 
@@ -109,12 +117,16 @@ const handleOpenManager = () => {
         v-for="cluster in sortedClusters"
         :key="cluster.id"
         class="cluster-item"
-        :class="{ active: cluster.clientId === clusterStore.activeClusterId }"
+        :class="{ active: cluster.clientId === clusterStore.activeClusterId, connecting: connectingClusterId === cluster.id }"
         @click="handleSwitchCluster(cluster.id)"
       >
         <div class="cluster-status">
-          <span class="status-dot" :class="cluster.connected ? 'connected' : 'disconnected'"></span>
-          <span class="status-text">{{ cluster.connected ? t('cluster.connected') : t('cluster.clickToConnect') }}</span>
+          <Loader2 v-if="connectingClusterId === cluster.id" :size="10" class="loading-spinner" />
+          <span v-else class="status-dot" :class="cluster.connected ? 'connected' : 'disconnected'"></span>
+          <span class="status-text">
+            <template v-if="connectingClusterId === cluster.id">{{ t('cluster.connecting') }}</template>
+            <template v-else>{{ cluster.connected ? t('cluster.connected') : t('cluster.clickToConnect') }}</template>
+          </span>
         </div>
         <div class="cluster-info">
           <span class="cluster-icon">
@@ -123,6 +135,7 @@ const handleOpenManager = () => {
             </svg>
           </span>
           <span class="cluster-name">{{ cluster.name }}</span>
+          <Loader2 v-if="connectingClusterId === cluster.id" :size="14" class="loading-spinner-right" />
         </div>
       </div>
 
@@ -178,6 +191,10 @@ const handleOpenManager = () => {
   border-left: 2px solid var(--accent);
 }
 
+.cluster-item.connecting {
+  cursor: wait;
+}
+
 .cluster-status {
   display: flex;
   align-items: center;
@@ -210,6 +227,26 @@ const handleOpenManager = () => {
   gap: 6px;
 }
 
+.loading-spinner {
+  color: var(--accent);
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner-right {
+  color: var(--accent);
+  animation: spin 1s linear infinite;
+  margin-left: auto;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .cluster-icon {
   display: flex;
   align-items: center;
@@ -218,6 +255,7 @@ const handleOpenManager = () => {
 }
 
 .cluster-name {
+  flex: 1;
   font-size: 13px;
   color: var(--text-primary);
   overflow: hidden;
