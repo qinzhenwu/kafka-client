@@ -221,7 +221,10 @@ onMounted(async () => {
 
   // Check for updates on startup (silent check)
   try {
-    const update = await check()
+    // 使用 insecure 选项跳过签名验证（应用未签名）
+    const update = await check({
+      dangerousInsecureTransport: true
+    })
     if (update) {
       console.log('[App] Update available:', update.version)
       showUpdateDialog.value = true

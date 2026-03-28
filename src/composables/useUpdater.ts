@@ -26,7 +26,10 @@ export function useUpdater() {
     updateInfo.value = null
 
     try {
-      update = await check()
+      // 使用 insecure 选项跳过签名验证（应用未签名）
+      update = await check({
+        dangerousInsecureTransport: true
+      })
 
       if (update) {
         updateAvailable.value = true
