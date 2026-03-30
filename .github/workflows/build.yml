@@ -93,7 +93,7 @@ jobs:
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
-          updaterJson: ${{ matrix.platform == 'macos-latest' && 'darwin-aarch64' || matrix.platform == 'windows-latest' && 'windows-x86_64' || 'linux-x86_64' }}
+          updaterJson: true
 
       - name: Build Tauri app (for test)
         if: "!startsWith(github.ref, 'refs/tags/v')"
