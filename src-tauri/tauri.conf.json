@@ -45,7 +45,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEQ0MUJBQ0RGM0E5NUFFOTAKUldTUXJwVTYzNndiMU1ITW1jYzIxcXh3K1lLT1MzRVdUemZqRW14KzJLVjVjZmpNNXNFTENYNGQK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQxMTNEODlDRDg2NDBCMTUKUldRVkMyVFluTmdUUVIwZmNMVVUrQTV3a2U1K3BrbGhpN29US2VWVWlOcHk5Y2VoRVJ4c1ErWjQK",
       "endpoints": [
         "https://github.com/qinzhenwu/kafka-client/releases/latest/download/{{target}}-{{arch}}.json"
       ]
