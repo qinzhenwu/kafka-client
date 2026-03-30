@@ -151,6 +151,7 @@ onUnmounted(() => {
         :key="tab.id"
         class="tab"
         :class="{ active: tabStore.activeContentTabId === tab.id }"
+        :title="getTabTitle(tab)"
         @click="tabStore.setActiveTab(tab.id)"
       >
         <component :is="icons[tab.icon]" :size="14" :stroke-width="1.5" class="tab-icon" />

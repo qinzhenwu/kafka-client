@@ -105,6 +105,7 @@ async function closeClusterTab(tab: ClusterTab) {
         :key="tab.id"
         class="cluster-tab"
         :class="{ active: tabStore.activeClusterTabId === tab.id }"
+        :title="tab.clusterName"
         draggable="true"
         @click="handleClusterClick(tab)"
         @dragstart="handleDragStart(tab.id, $event as DragEvent)"
