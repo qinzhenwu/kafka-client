@@ -85,7 +85,7 @@ const handleNavClick = (key: string) => {
     <div class="bottom-section">
       <!-- Settings button -->
       <div class="settings-btn" :title="t('common.settings')" @click="emit('openSettings')">
-        <Settings :size="18" :stroke-width="1.5" />
+        <Settings :size="22" :stroke-width="1.5" class="settings-icon" />
       </div>
 
       <!-- Cluster switcher -->
@@ -142,19 +142,24 @@ const handleNavClick = (key: string) => {
 
 .settings-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
+  padding: 8px 4px;
   border-radius: var(--border-radius);
   cursor: pointer;
   color: var(--text-muted);
   transition: all 0.15s ease;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
 }
 
 .settings-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
+}
+
+.settings-icon {
+  color: var(--accent);
 }
 
 .cluster-icon {
