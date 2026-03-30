@@ -36,4 +36,4 @@ temp/
 keys/
 
 # Claude Code
-.claude/
+.claude/keys_new/
