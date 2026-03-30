@@ -224,19 +224,6 @@ export default {
     resetSuccess: '偏移重置成功',
     resetFailed: '偏移重置失败'
   },
-  updater: {
-    title: '软件更新',
-    checking: '正在检查更新...',
-    noUpdate: '当前已是最新版本',
-    currentVersion: '当前版本',
-    newVersionAvailable: '发现新版本',
-    releaseNotes: '更新内容',
-    checkFailed: '检查更新失败',
-    downloading: '下载中...',
-    updateNow: '立即更新',
-    checkAgain: '重新检查',
-    hint: '保持软件更新以获得最佳体验'
-  },
   settings: {
     about: '关于'
   }

@@ -29,22 +29,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies (Ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libssl-dev libsasl2-dev libcurl4-openssl-dev pkg-config build-essential
-
       - name: Install dependencies (macOS only)
         if: matrix.platform == 'macos-latest'
         run: |
           brew install cmake openssl pkg-config
-
-      - name: Install dependencies (Windows only)
-        if: matrix.platform == 'windows-latest'
-        run: |
-          choco install cmake strawberryperl -y
-          echo "C:\Program Files\CMake\bin" >> $GITHUB_PATH
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -87,36 +75,6 @@ jobs:
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
-
-      - name: Sign and upload updater JSON
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          cd src-tauri/target/aarch64-apple-darwin/release/bundle/macos
-
-          # Sign the app tar.gz
-          TAURI_SIGNING_PRIVATE_KEY="${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" npx tauri signer sign KafkaClient.app.tar.gz
-
-          # Read signature and encode
-          SIG=$(cat KafkaClient.app.tar.gz.sig | base64 | tr -d '\n')
-
-          # Create updater JSON
-          cat > darwin-aarch64.json << EOF
-          {
-            "version": "${{ github.ref_name }}",
-            "date": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "platforms": {
-              "darwin-aarch64": {
-                "signature": "$SIG",
-                "url": "https://github.com/qinzhenwu/kafka-client/releases/download/${{ github.ref_name }}/KafkaClient.app.tar.gz"
-              }
-            }
-          }
-          EOF
-
-          # Upload JSON to release
-          gh release upload "${{ github.ref_name }}" darwin-aarch64.json --clobber
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Tauri app (for test)
         if: "!startsWith(github.ref, 'refs/tags/v')"

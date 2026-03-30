@@ -22,8 +22,6 @@ pub fn run() {
                 let _ = window.set_focus();
             }
         }))
-        .plugin(tauri_plugin_process::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(Arc::new(RwLock::new(KafkaClientManager::new())))
         .manage(streaming_sessions)
         .invoke_handler(tauri::generate_handler![

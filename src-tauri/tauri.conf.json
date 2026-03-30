@@ -42,13 +42,5 @@
         "language": "zh-CN"
       }
     }
-  },
-  "plugins": {
-    "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDdCQjFDMEVDMUI2NEE1MjgKUldRb3BXUWI3TUN4ZXlwSjhoVzJoSlYyaW0yV2RHbDhoMzJyZXFSNlpveUovZkY5VGVqOGs1b1QK",
-      "endpoints": [
-        "https://github.com/qinzhenwu/kafka-client/releases/latest/download/{{target}}-{{arch}}.json"
-      ]
-    }
   }
 }
