@@ -25,8 +25,6 @@ jobs:
     runs-on: ${{ matrix.platform }}
     permissions:
       contents: write
-    env:
-      TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -72,7 +70,6 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'KafkaClient ${{ github.ref_name }}'
@@ -81,20 +78,45 @@ jobs:
 
             ### 系统要求 / System Requirements
             - **macOS**: macOS 10.15 (Catalina) 或更高版本
-            - **Windows**: Windows 10 (1803+) 或 Windows 11
-            - **Linux**: Ubuntu 18.04+ 或其他主流发行版
 
             ### Downloads
-            - **macOS (Apple Silicon)**: Download the `.dmg` file
-            - **Windows**: Download the `.msi` or `.exe` file
-            - **Linux**: Download the `.AppImage` or `.deb` file
+            - **macOS (Apple Silicon)**: Download the `.app.tar.gz` file
 
             ### What's Changed
             See commit history for details.
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
-          updaterJson: "darwin-aarch64"
+
+      - name: Sign and upload updater JSON
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          cd src-tauri/target/aarch64-apple-darwin/release/bundle/macos
+
+          # Sign the app tar.gz
+          TAURI_SIGNING_PRIVATE_KEY="${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" npx tauri signer sign KafkaClient.app.tar.gz
+
+          # Read signature and encode
+          SIG=$(cat KafkaClient.app.tar.gz.sig | base64 | tr -d '\n')
+
+          # Create updater JSON
+          cat > darwin-aarch64.json << EOF
+          {
+            "version": "${{ github.ref_name }}",
+            "date": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "platforms": {
+              "darwin-aarch64": {
+                "signature": "$SIG",
+                "url": "https://github.com/qinzhenwu/kafka-client/releases/download/${{ github.ref_name }}/KafkaClient.app.tar.gz"
+              }
+            }
+          }
+          EOF
+
+          # Upload JSON to release
+          gh release upload "${{ github.ref_name }}" darwin-aarch64.json --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Tauri app (for test)
         if: "!startsWith(github.ref, 'refs/tags/v')"
