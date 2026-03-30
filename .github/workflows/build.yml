@@ -68,17 +68,6 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
-      - name: Debug signing key
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ]; then
-            echo "TAURI_SIGNING_PRIVATE_KEY is set (length: ${#TAURI_SIGNING_PRIVATE_KEY})"
-          else
-            echo "WARNING: TAURI_SIGNING_PRIVATE_KEY is NOT set!"
-          fi
-        env:
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-
       - name: Build Tauri app (for release)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: tauri-apps/tauri-action@v0
