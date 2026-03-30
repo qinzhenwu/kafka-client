@@ -1,6 +1,7 @@
 <!-- src/components/common/AboutDialog.vue -->
 <script setup lang="ts">
-import { X, Server } from 'lucide-vue-next'
+import { X } from 'lucide-vue-next'
+import appIcon from '@/assets/icon.png'
 
 defineProps<{
   show: boolean
@@ -27,7 +28,7 @@ const handleClose = () => {
         </div>
         <div class="dialog-content">
           <div class="app-icon">
-            <Server :size="48" :stroke-width="1" />
+            <img :src="appIcon" alt="Kafka Client" class="icon-image" />
           </div>
           <div class="app-name">Kafka Client</div>
           <div class="app-version">Version {{ appVersion }}</div>
@@ -95,8 +96,13 @@ const handleClose = () => {
 }
 
 .app-icon {
-  color: var(--accent);
   margin-bottom: 16px;
+}
+
+.icon-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
 }
 
 .app-name {
