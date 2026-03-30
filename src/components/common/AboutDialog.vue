@@ -11,7 +11,7 @@ const emit = defineEmits<{
   'update:show': [value: boolean]
 }>()
 
-const appVersion = '0.2.9'
+const appVersion = '0.2.10'
 
 const handleClose = () => {
   emit('update:show', false)
