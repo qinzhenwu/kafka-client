@@ -179,22 +179,23 @@ const handleConsume = async () => {
   messageStore.clearMessages()
 
   try {
-    const offsetNum = parseInt(startOffset.value, 10) || 0
-    const partitionNum = selectedPartition.value === 'all' ? null : selectedPartition.value
-
-    if (partitionNum !== null && offsetNum >= 0) {
-      await messageStore.consumeFromOffset(
-        clusterStore.activeClusterId,
-        props.topicName,
-        partitionNum,
-        offsetNum,
-        messageLimit.value
-      )
-    } else {
+    if (selectedPartition.value === 'all') {
+      // All partitions - use consumeFromPosition with offset or position
+      const position = startOffset.value || startPosition.value
       await messageStore.consumeFromPosition(
         clusterStore.activeClusterId,
         props.topicName,
-        startPosition.value,
+        position,
+        messageLimit.value
+      )
+    } else {
+      // Specific partition - use consumeFromOffset
+      const offsetNum = parseInt(startOffset.value, 10) || 0
+      await messageStore.consumeFromOffset(
+        clusterStore.activeClusterId,
+        props.topicName,
+        selectedPartition.value,
+        offsetNum,
         messageLimit.value
       )
     }

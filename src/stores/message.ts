@@ -125,7 +125,7 @@ export const useMessageStore = defineStore('message', {
     async consumeFromPosition(
       clientId: string,
       topic: string,
-      position: 'earliest' | 'latest',
+      position: string,
       limit: number = 100
     ) {
       this.loading = true

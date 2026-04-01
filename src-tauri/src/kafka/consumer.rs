@@ -101,14 +101,7 @@ impl<'a> KafkaConsumerOps<'a> {
         let empty_tpl = rdkafka::TopicPartitionList::new();
         let _ = self.consumer.assign(&empty_tpl);
 
-        // Set starting position
-        let offset = match position {
-            "earliest" => rdkafka::Offset::Beginning,
-            "latest" => rdkafka::Offset::End,
-            _ => rdkafka::Offset::Beginning,
-        };
-
-        // Get partition info and assign offsets
+        // Get partition info first
         let metadata = self.consumer
             .fetch_metadata(Some(topic), Duration::from_secs(5))
             .map_err(|e| KafkaClientError::Kafka(e))?;
@@ -118,9 +111,29 @@ impl<'a> KafkaConsumerOps<'a> {
             .ok_or_else(|| KafkaClientError::TopicNotFound(topic.to_string()))?;
 
         let mut tpl = rdkafka::TopicPartitionList::new();
-        for partition in topic_meta.partitions() {
-            tpl.add_partition_offset(topic, partition.id(), offset)
-                .map_err(|e| KafkaClientError::Connection(format!("Failed to set offset: {:?}", e)))?;
+
+        // Check if position is a numeric offset or a named position
+        if position == "earliest" || position == "latest" {
+            // Set starting position for all partitions
+            let offset = match position {
+                "earliest" => rdkafka::Offset::Beginning,
+                "latest" => rdkafka::Offset::End,
+                _ => rdkafka::Offset::Beginning,
+            };
+
+            for partition in topic_meta.partitions() {
+                tpl.add_partition_offset(topic, partition.id(), offset)
+                    .map_err(|e| KafkaClientError::Connection(format!("Failed to set offset: {:?}", e)))?;
+            }
+        } else {
+            // Try to parse as numeric offset
+            let offset_value: i64 = position.parse()
+                .map_err(|_| KafkaClientError::Connection(format!("Invalid offset value: {}", position)))?;
+
+            for partition in topic_meta.partitions() {
+                tpl.add_partition_offset(topic, partition.id(), rdkafka::Offset::Offset(offset_value))
+                    .map_err(|e| KafkaClientError::Connection(format!("Failed to set offset: {:?}", e)))?;
+            }
         }
 
         // Use assign instead of subscribe for manual partition assignment
