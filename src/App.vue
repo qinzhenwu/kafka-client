@@ -18,6 +18,7 @@ import ClusterTabBar from '@/components/cluster/ClusterTabBar.vue'
 import ClusterSwitch from '@/components/cluster/ClusterSwitch.vue'
 import ClusterManager from '@/components/cluster/ClusterManager.vue'
 import SettingsPopup from '@/components/settings/SettingsPopup.vue'
+import ProduceDialog from '@/components/message/ProduceDialog.vue'
 import TopicDetailTab from '@/views/tabs/TopicDetailTab.vue'
 import MessageTab from '@/views/tabs/MessageTab.vue'
 import ConsumerGroupTab from '@/views/tabs/ConsumerGroupTab.vue'
@@ -31,6 +32,7 @@ const { t, locale } = useI18n()
 const tabStore = useTabStore()
 const themeStore = useThemeStore()
 const clusterStore = useClusterStore()
+const messageStore = useMessageStore()
 
 const activeNav = ref<string>('topics')
 
@@ -305,6 +307,12 @@ themeStore.initTheme()
           <ClusterManager
             v-if="showClusterManager"
             @close="showClusterManager = false"
+          />
+
+          <!-- Produce Dialog (global) -->
+          <ProduceDialog
+            :show="messageStore.showProduceDialog"
+            :topic-name="messageStore.produceDialogTopic || ''"
           />
         </div>
       </n-dialog-provider>

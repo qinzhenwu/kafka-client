@@ -28,6 +28,9 @@ interface MessageState {
   streamTopic: string | null
   maxMessages: number
   unlisten: UnlistenFn | null
+  // Produce dialog state
+  showProduceDialog: boolean
+  produceDialogTopic: string | null
 }
 
 // Sort messages by timestamp descending (newest first)
@@ -49,6 +52,8 @@ export const useMessageStore = defineStore('message', {
     streamTopic: null,
     maxMessages: 1000,
     unlisten: null,
+    showProduceDialog: false,
+    produceDialogTopic: null,
   }),
 
   actions: {
@@ -219,6 +224,16 @@ export const useMessageStore = defineStore('message', {
     clearMessages() {
       this.messages = []
       this.hasMore = false
+    },
+
+    openProduceDialog(topic: string) {
+      this.showProduceDialog = true
+      this.produceDialogTopic = topic
+    },
+
+    closeProduceDialog() {
+      this.showProduceDialog = false
+      this.produceDialogTopic = null
     },
   },
 })

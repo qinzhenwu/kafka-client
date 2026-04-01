@@ -111,7 +111,7 @@ const handleClear = () => {
 }
 
 const handleClose = () => {
-  emit('update:show', false)
+  messageStore.closeProduceDialog()
 }
 </script>
 

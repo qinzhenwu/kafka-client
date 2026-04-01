@@ -10,7 +10,6 @@ import { useMessageStore } from '@/stores/message'
 import IconButton from '@/components/common/IconButton.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import TopicForm from '@/components/topic/TopicForm.vue'
-import ProduceDialog from '@/components/message/ProduceDialog.vue'
 import { FileText, RefreshCw } from 'lucide-vue-next'
 
 const props = defineProps<{
@@ -28,9 +27,6 @@ const loading = ref(false)
 const showEditModal = ref(false)
 const showDeleteConfirm = ref(false)
 const editingTopic = ref<{ name: string; partitions: number } | null>(null)
-
-// Dialog state for produce
-const showProduceDialog = ref(false)
 
 const topicInfo = ref(topicStore.selectedTopic)
 
@@ -67,12 +63,8 @@ const loadTopicInfo = async () => {
 
 onMounted(loadTopicInfo)
 
-watch(() => props.tab.params.topicName, (newTopic, oldTopic) => {
+watch(() => props.tab.params.topicName, () => {
   loadTopicInfo()
-  // Close produce dialog when topic changes
-  if (oldTopic && newTopic !== oldTopic) {
-    showProduceDialog.value = false
-  }
 })
 
 const handleViewMessages = () => {
@@ -82,7 +74,7 @@ const handleViewMessages = () => {
 }
 
 const handleSendTest = () => {
-  showProduceDialog.value = true
+  messageStore.openProduceDialog(props.tab.params.topicName)
 }
 
 const handleEdit = () => {
@@ -237,12 +229,6 @@ const confirmDelete = async () => {
       @confirm="confirmDelete"
       @cancel="showDeleteConfirm = false"
       @close="showDeleteConfirm = false"
-    />
-
-    <!-- Produce Dialog -->
-    <ProduceDialog
-      v-model:show="showProduceDialog"
-      :topic-name="tab.params.topicName"
     />
   </div>
 </template>
