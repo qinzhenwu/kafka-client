@@ -169,7 +169,7 @@ onUnmounted(() => {
             <Send :size="18" :stroke-width="1.5" class="header-icon" />
             {{ t('message.produce') }} - {{ topicName }}
           </span>
-          <X :size="16" class="header-close" @click.stop="handleClose" />
+          <X :size="18" class="header-close" @click.stop="handleClose" />
         </div>
 
         <!-- Content -->
@@ -352,7 +352,7 @@ onUnmounted(() => {
 .header-close {
   color: var(--text-muted);
   cursor: pointer;
-  padding: 4px;
+  transition: color 0.15s ease;
 }
 
 .header-close:hover {
