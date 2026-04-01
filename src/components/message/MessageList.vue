@@ -23,7 +23,7 @@ const topicStore = useTopicStore()
 const message = useMessage()
 
 const selectedPartition = ref<number | 'all'>('all')
-const startOffset = ref<string>('0')
+const startOffset = ref<string>('')
 const messageLimit = ref(200)
 const showDetail = ref(false)
 const selectedMessage = ref<KafkaMessage | null>(null)
