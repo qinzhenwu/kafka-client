@@ -114,7 +114,7 @@ async function closeClusterTab(tab: ClusterTab) {
         <span class="status-dot" :class="tab.connected ? 'connected' : 'disconnected'"></span>
         <span class="cluster-name">{{ tab.clusterName }}</span>
         <X
-          :size="12"
+          :size="18"
           class="close-btn"
           @click="handleCloseCluster(tab, $event)"
         />
