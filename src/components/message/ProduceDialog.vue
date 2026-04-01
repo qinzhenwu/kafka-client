@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import {
   NInput, NInputNumber, NSelect, useMessage
 } from 'naive-ui'
@@ -7,7 +7,7 @@ import { useMessageStore, type ProduceRequest } from '@/stores/message'
 import { useClusterStore } from '@/stores/cluster'
 import { useI18n } from 'vue-i18n'
 import IconButton from '@/components/common/IconButton.vue'
-import { Send, X, Trash2 } from 'lucide-vue-next'
+import { Send, X, Trash2, GripHorizontal } from 'lucide-vue-next'
 
 const props = defineProps<{
   show: boolean
@@ -36,6 +36,12 @@ const headerKey = ref('')
 const headerValue = ref('')
 const messageFormat = ref<'json' | 'text'>('text')
 
+// Drag state
+const dialogPosition = ref({ x: 0, y: 0 })
+const isDragging = ref(false)
+const dragStart = ref({ x: 0, y: 0 })
+const dialogRef = ref<HTMLElement | null>(null)
+
 // Reset form when dialog opens
 watch(() => props.show, (show) => {
   if (show) {
@@ -49,6 +55,8 @@ watch(() => props.show, (show) => {
     headerKey.value = ''
     headerValue.value = ''
     messageFormat.value = 'text'
+    // Reset position
+    dialogPosition.value = { x: 0, y: 0 }
   }
 })
 
@@ -113,19 +121,55 @@ const handleClear = () => {
 const handleClose = () => {
   messageStore.closeProduceDialog()
 }
+
+// Drag handlers
+const handleMouseDown = (e: MouseEvent) => {
+  isDragging.value = true
+  dragStart.value = {
+    x: e.clientX - dialogPosition.value.x,
+    y: e.clientY - dialogPosition.value.y
+  }
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', handleMouseUp)
+}
+
+const handleMouseMove = (e: MouseEvent) => {
+  if (!isDragging.value) return
+  dialogPosition.value = {
+    x: e.clientX - dragStart.value.x,
+    y: e.clientY - dragStart.value.y
+  }
+}
+
+const handleMouseUp = () => {
+  isDragging.value = false
+  document.removeEventListener('mousemove', handleMouseMove)
+  document.removeEventListener('mouseup', handleMouseUp)
+}
+
+onUnmounted(() => {
+  document.removeEventListener('mousemove', handleMouseMove)
+  document.removeEventListener('mouseup', handleMouseUp)
+})
 </script>
 
 <template>
   <Teleport to="body">
     <div v-if="show" class="modal-overlay">
-      <div class="modal-container produce-dialog" @click.stop>
+      <div
+        ref="dialogRef"
+        class="modal-container produce-dialog"
+        :style="{ transform: `translate(${dialogPosition.x}px, ${dialogPosition.y}px)` }"
+        @click.stop
+      >
         <!-- Header -->
-        <div class="modal-header">
+        <div class="modal-header" @mousedown="handleMouseDown">
+          <GripHorizontal :size="16" class="drag-handle" />
           <span class="header-title">
             <Send :size="18" :stroke-width="1.5" class="header-icon" />
             {{ t('message.produce') }} - {{ topicName }}
           </span>
-          <X :size="16" class="header-close" @click="handleClose" />
+          <X :size="16" class="header-close" @click.stop="handleClose" />
         </div>
 
         <!-- Content -->
@@ -277,10 +321,17 @@ const handleClose = () => {
 
 .modal-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  cursor: move;
+  user-select: none;
+}
+
+.drag-handle {
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -291,6 +342,7 @@ const handleClose = () => {
   font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
+  flex: 1;
 }
 
 .header-icon {
