@@ -117,7 +117,7 @@ const handleClose = () => {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click="handleClose">
+    <div v-if="show" class="modal-overlay">
       <div class="modal-container produce-dialog" @click.stop>
         <!-- Header -->
         <div class="modal-header">
