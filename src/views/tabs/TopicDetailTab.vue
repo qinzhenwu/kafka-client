@@ -200,6 +200,7 @@ const confirmDelete = async () => {
       <!-- Partition Table -->
       <div class="partition-table">
         <div class="table-header">
+          <span>Leader Host</span>
           <span>{{ t('topic.partition') }}</span>
           <span>{{ t('topic.leader') }}</span>
           <span>{{ t('topic.isr') }}</span>
@@ -210,6 +211,7 @@ const confirmDelete = async () => {
           :key="partition.id"
           class="table-row"
         >
+          <span>{{ partition.leader_host }}</span>
           <span>{{ partition.id }}</span>
           <span>{{ partition.leader }}</span>
           <span>{{ partition.isr?.join(', ') || '-' }}</span>
@@ -314,7 +316,7 @@ const confirmDelete = async () => {
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   padding: 12px 16px;
 }
 

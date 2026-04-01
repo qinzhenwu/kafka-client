@@ -64,6 +64,13 @@ impl<'a> KafkaAdminOps<'a> {
             .first()
             .ok_or_else(|| KafkaClientError::TopicNotFound(topic_name.to_string()))?;
 
+        // Build a map of broker id to host
+        let broker_map: std::collections::HashMap<i32, String> = metadata
+            .brokers()
+            .iter()
+            .map(|b| (b.id(), format!("{}:{}", b.host(), b.port())))
+            .collect();
+
         let partitions: Vec<PartitionInfo> = topic
             .partitions()
             .iter()
@@ -73,9 +80,15 @@ impl<'a> KafkaAdminOps<'a> {
                     .fetch_watermarks(topic_name, p.id(), std::time::Duration::from_secs(5))
                     .unwrap_or((-1, -1));
 
+                let leader_host = broker_map
+                    .get(&p.leader())
+                    .cloned()
+                    .unwrap_or_else(|| p.leader().to_string());
+
                 PartitionInfo {
                     id: p.id(),
                     leader: p.leader(),
+                    leader_host,
                     replicas: p.replicas().to_vec(),
                     isr: p.isr().to_vec(),
                     high_watermark,

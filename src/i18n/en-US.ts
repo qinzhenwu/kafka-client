@@ -76,6 +76,7 @@ export default {
     replication: 'Replication',
     messages: 'Messages',
     leader: 'Leader',
+    leaderHost: 'Leader Host',
     isr: 'ISR',
     offset: 'Offset',
     replicationFactor: 'Replication Factor',

@@ -11,6 +11,7 @@ pub struct TopicInfo {
 pub struct PartitionInfo {
     pub id: i32,
     pub leader: i32,
+    pub leader_host: String,
     pub replicas: Vec<i32>,
     pub isr: Vec<i32>,
     pub high_watermark: i64,

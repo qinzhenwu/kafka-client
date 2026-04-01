@@ -76,6 +76,7 @@ export default {
     replication: '副本数',
     messages: '消息数',
     leader: 'Leader',
+    leaderHost: 'Leader Host',
     isr: 'ISR',
     offset: 'Offset',
     replicationFactor: '副本因子',

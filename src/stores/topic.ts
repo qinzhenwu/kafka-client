@@ -4,6 +4,7 @@ import { invoke } from '@tauri-apps/api/core'
 export interface PartitionInfo {
   id: number
   leader: number
+  leader_host: string
   replicas: number[]
   isr: number[]
   high_watermark: number
