@@ -62,6 +62,8 @@ src-tauri/src/
 
 **Streaming**: Real-time consumption uses `StreamingSessions` (also `Arc<RwLock<HashMap>>`) to track active streams and allow stopping by session_id.
 
+**PartitionInfo**: Includes `leader_host` field (format: "host:port") resolved from broker metadata for displaying broker addresses in topic details.
+
 ### Frontend (Vue 3 + TypeScript)
 
 ```
@@ -95,6 +97,8 @@ Commands are registered in `lib.rs` with `tauri::generate_handler![]`.
 - **Rust**: Use `thiserror` for error types. All async operations use `tokio`. Tauri commands should be thin wrappers around kafka module logic.
 - **Vue**: Composition API with `<script setup>`. Components organized by feature. Types defined alongside stores.
 - **i18n**: All user-facing strings must use `t('key')` from `vue-i18n`.
+- **Global Dialogs**: For dialogs that persist across tab switches, store state in Pinia store and render in App.vue instead of component-local state.
+- **Icon Sizes**: Close buttons use `:size="18"`, inline icons use `:size="14"`, sidebar icons use `:size="22"`.
 
 ## UI Components
 
