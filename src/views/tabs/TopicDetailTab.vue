@@ -200,7 +200,7 @@ const confirmDelete = async () => {
       <!-- Partition Table -->
       <div class="partition-table">
         <div class="table-header">
-          <span>Leader Host</span>
+          <span>{{ t('topic.leaderHost') }}</span>
           <span>{{ t('topic.partition') }}</span>
           <span>{{ t('topic.leader') }}</span>
           <span>{{ t('topic.isr') }}</span>
