@@ -323,8 +323,10 @@ onUnmounted(() => {
 .second-sidebar {
   position: relative;
   height: 100%;
-  background: var(--bg-secondary);
-  border-right: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-right: 1px solid var(--glass-border);
   overflow-y: auto;
   overflow-x: auto;
   flex-shrink: 0;
@@ -461,15 +463,20 @@ onUnmounted(() => {
   font-weight: normal;
   white-space: nowrap;
   min-width: max-content;
+  background: transparent;
 }
 
 .list-item:hover {
-  background: var(--bg-hover);
+  background: var(--glass-bg-hover);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--text-secondary);
 }
 
 .list-item.active {
-  background: var(--accent-bg);
+  background: var(--glass-bg-active);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-left: 2px solid var(--accent);
   color: var(--text-primary);
   font-weight: normal;
@@ -483,6 +490,7 @@ onUnmounted(() => {
 .item-name {
   font-size: 13px;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .empty-list {
@@ -511,11 +519,13 @@ onUnmounted(() => {
   color: var(--text-secondary);
   font-size: 14px;
   margin-bottom: 8px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .empty-hint {
   color: var(--text-muted);
   font-size: 12px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .loading-state {
@@ -572,5 +582,66 @@ onUnmounted(() => {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Light Mode */
+:root[data-theme="light"] .second-sidebar {
+  background: rgba(255, 255, 255, 0.6);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .resize-handle:hover,
+:root[data-theme="light"] .resize-handle.resize-active {
+  background: #3b82f6;
+}
+
+:root[data-theme="light"] .list-item {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .list-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  color: #475569;
+}
+
+:root[data-theme="light"] .list-item.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 2px solid #3b82f6;
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .item-icon {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .item-name {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .empty-text,
+:root[data-theme="light"] .empty-hint {
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .empty-text {
+  color: #475569;
+}
+
+:root[data-theme="light"] .empty-hint {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .refresh-btn {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .refresh-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+  color: #475569;
+}
+
+:root[data-theme="light"] .search-icon {
+  color: #64748b;
 }
 </style>

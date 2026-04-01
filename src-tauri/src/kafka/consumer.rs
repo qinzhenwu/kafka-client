@@ -112,18 +112,39 @@ impl<'a> KafkaConsumerOps<'a> {
 
         let mut tpl = rdkafka::TopicPartitionList::new();
 
-        // Check if position is a numeric offset or a named position
-        if position == "earliest" || position == "latest" {
-            // Set starting position for all partitions
-            let offset = match position {
-                "earliest" => rdkafka::Offset::Beginning,
-                "latest" => rdkafka::Offset::End,
-                _ => rdkafka::Offset::Beginning,
-            };
-
+        // Check if position is a named position or numeric offset
+        if position == "earliest" {
+            // Set starting position for all partitions to Beginning
             for partition in topic_meta.partitions() {
-                tpl.add_partition_offset(topic, partition.id(), offset)
+                tpl.add_partition_offset(topic, partition.id(), rdkafka::Offset::Beginning)
                     .map_err(|e| KafkaClientError::Connection(format!("Failed to set offset: {:?}", e)))?;
+            }
+        } else if position == "latest" {
+            // For "latest", we want to get the most recent N messages
+            // Get watermarks for each partition and calculate starting offsets
+
+            let partitions = topic_meta.partitions();
+            let partition_count = partitions.len();
+
+            // Calculate how many messages to fetch from each partition
+            // Distribute limit evenly across partitions
+            let per_partition_limit = (limit as usize / partition_count).max(1);
+
+            for partition in partitions {
+                // Get watermarks (low_watermark, high_watermark)
+                let (low, high) = self.consumer
+                    .fetch_watermarks(topic, partition.id(), Duration::from_secs(5))
+                    .map_err(|e| KafkaClientError::Kafka(e))?;
+
+                // Calculate starting offset: go back per_partition_limit from high watermark
+                // But ensure we don't go below low watermark
+                let start_offset = std::cmp::max(low, high - per_partition_limit as i64);
+
+                // If partition has no messages (low == high), skip it
+                if low < high {
+                    tpl.add_partition_offset(topic, partition.id(), rdkafka::Offset::Offset(start_offset))
+                        .map_err(|e| KafkaClientError::Connection(format!("Failed to set offset: {:?}", e)))?;
+                }
             }
         } else {
             // Try to parse as numeric offset

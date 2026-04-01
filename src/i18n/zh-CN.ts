@@ -49,6 +49,8 @@ export default {
     testFailed: '连接测试失败',
     connectSuccess: '集群连接成功',
     connectFailed: '集群连接失败',
+    disconnectSuccess: '集群已断开连接',
+    disconnectFailed: '断开连接失败',
     reconnectSuccess: '集群重新连接成功',
     reconnect: '重新连接',
     save: '保存',
@@ -185,11 +187,9 @@ export default {
     search: '搜索',
     toggleTheme: '切换主题',
     switchLanguage: '切换语言',
-    selectTheme: '选择主题配色'
+    selectTheme: '切换主题'
   },
   theme: {
-    mode: '模式',
-    colorScheme: '配色方案',
     light: '浅色',
     dark: '深色',
     system: '跟随系统'

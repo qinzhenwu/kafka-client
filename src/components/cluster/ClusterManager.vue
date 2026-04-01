@@ -123,8 +123,8 @@ const clusterCount = computed(() => clusterStore.clusters.length)
             </div>
             <div class="card-actions">
               <template v-if="cluster.connected">
-                <button class="action-btn" @click="handleEdit(cluster.id)">{{ t('common.edit') }}</button>
-                <button class="action-btn" @click="handleDisconnect(cluster.clientId!)">{{ t('cluster.disconnect') }}</button>
+                <button class="action-btn edit-btn" @click="handleEdit(cluster.id)">{{ t('common.edit') }}</button>
+                <button class="action-btn disconnect-btn" @click="handleDisconnect(cluster.clientId!)">{{ t('cluster.disconnect') }}</button>
               </template>
               <template v-else>
                 <button class="action-btn primary" :disabled="connectingClusterId === cluster.id" @click="handleConnect(cluster.id)">
@@ -132,7 +132,7 @@ const clusterCount = computed(() => clusterStore.clusters.length)
                   <span v-if="connectingClusterId === cluster.id">{{ t('cluster.connecting') }}</span>
                   <span v-else>{{ t('cluster.connect') }}</span>
                 </button>
-                <button class="action-btn" :disabled="connectingClusterId === cluster.id" @click="handleEdit(cluster.id)">{{ t('common.edit') }}</button>
+                <button class="action-btn edit-btn" :disabled="connectingClusterId === cluster.id" @click="handleEdit(cluster.id)">{{ t('common.edit') }}</button>
                 <button class="action-btn danger" :disabled="connectingClusterId === cluster.id" @click="handleDelete(cluster.id)">{{ t('common.delete') }}</button>
               </template>
             </div>
@@ -187,7 +187,9 @@ const clusterCount = computed(() => clusterStore.clusters.length)
 .cluster-manager-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -197,9 +199,12 @@ const clusterCount = computed(() => clusterStore.clusters.length)
 .cluster-manager {
   width: 480px;
   max-height: 80vh;
-  background: var(--bg-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -210,13 +215,14 @@ const clusterCount = computed(() => clusterStore.clusters.length)
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .header-title {
   font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .header-close {
@@ -236,15 +242,18 @@ const clusterCount = computed(() => clusterStore.clusters.length)
 }
 
 .cluster-card {
-  background: var(--bg-tertiary);
-  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   padding: 14px;
   margin-bottom: 12px;
-  border: 1px solid transparent;
 }
 
 .cluster-card.connected {
-  border-color: var(--success);
+  border-color: rgba(34, 197, 94, 0.5);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.15);
 }
 
 .card-header {
@@ -261,22 +270,27 @@ const clusterCount = computed(() => clusterStore.clusters.length)
 }
 
 .status-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
 }
 
 .status-dot.connected {
-  background: var(--success);
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
 }
 
 .status-dot.disconnected {
-  background: var(--text-muted);
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
 .status-text {
-  font-size: 10px;
-  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  color: #f1f5f9;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .card-actions {
@@ -285,17 +299,21 @@ const clusterCount = computed(() => clusterStore.clusters.length)
 }
 
 .action-btn {
-  padding: 4px 10px;
-  background: var(--bg-secondary);
-  border: none;
-  border-radius: 4px;
-  color: var(--text-muted);
-  font-size: 11px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .action-btn:disabled {
@@ -304,21 +322,60 @@ const clusterCount = computed(() => clusterStore.clusters.length)
 }
 
 .action-btn:hover:not(:disabled) {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* 编辑按钮 - 蓝色 */
+.action-btn.edit-btn {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+.action-btn.edit-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #bfdbfe;
+}
+
+/* 断开连接按钮 - 橙色 */
+.action-btn.disconnect-btn {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.3);
+  color: #fdba74;
+}
+
+.action-btn.disconnect-btn:hover:not(:disabled) {
+  background: rgba(249, 115, 22, 0.25);
+  border-color: rgba(249, 115, 22, 0.5);
+  color: #fed7aa;
+}
+
+/* 连接按钮 - 绿色 */
 .action-btn.primary {
-  background: var(--accent);
-  color: white;
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #86efac;
 }
 
 .action-btn.primary:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.6);
+  color: #bbf7d0;
 }
 
+/* 删除按钮 - 红色 */
 .action-btn.danger {
-  color: var(--error);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.action-btn.danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fecaca;
 }
 
 .loading-spinner {
@@ -347,13 +404,16 @@ const clusterCount = computed(() => clusterStore.clusters.length)
 }
 
 .cluster-name {
-  font-size: 15px;
-  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .card-footer {
   font-size: 12px;
-  color: var(--text-muted);
+  color: #cbd5e1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .empty-state {
@@ -367,12 +427,13 @@ const clusterCount = computed(() => clusterStore.clusters.length)
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
 }
 
 .footer-count {
   font-size: 12px;
   color: var(--text-muted);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .add-btn {
@@ -380,15 +441,161 @@ const clusterCount = computed(() => clusterStore.clusters.length)
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background: var(--accent);
-  border: none;
+  background: rgba(34, 197, 94, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(34, 197, 94, 0.4);
   border-radius: 6px;
-  color: white;
+  color: #86efac;
   font-size: 13px;
   cursor: pointer;
+  transition: all 0.15s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .add-btn:hover {
-  background: var(--accent-hover);
+  background: rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.6);
+  color: #bbf7d0;
+}
+
+/* Light Mode */
+:root[data-theme="light"] .cluster-manager-overlay {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="light"] .cluster-manager {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+:root[data-theme="light"] .manager-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .header-title {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .header-close {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .header-close:hover {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .cluster-card {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .cluster-card.connected {
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.1);
+}
+
+:root[data-theme="light"] .status-text {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .cluster-name {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .card-footer {
+  color: #475569;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .action-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #475569;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .action-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme="light"] .action-btn.edit-btn {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #3b82f6;
+}
+
+:root[data-theme="light"] .action-btn.edit-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #2563eb;
+}
+
+:root[data-theme="light"] .action-btn.disconnect-btn {
+  background: rgba(249, 115, 22, 0.1);
+  border-color: rgba(249, 115, 22, 0.25);
+  color: #f97316;
+}
+
+:root[data-theme="light"] .action-btn.disconnect-btn:hover:not(:disabled) {
+  background: rgba(249, 115, 22, 0.2);
+  border-color: rgba(249, 115, 22, 0.4);
+  color: #ea580c;
+}
+
+:root[data-theme="light"] .action-btn.primary {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #16a34a;
+}
+
+:root[data-theme="light"] .action-btn.primary:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #15803d;
+}
+
+:root[data-theme="light"] .action-btn.danger {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+}
+
+:root[data-theme="light"] .action-btn.danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #dc2626;
+}
+
+:root[data-theme="light"] .manager-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .footer-count {
+  color: #64748b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .add-btn {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #16a34a;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .add-btn:hover {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #15803d;
+}
+
+:root[data-theme="light"] .empty-state {
+  color: #64748b;
 }
 </style>

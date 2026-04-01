@@ -1,10 +1,8 @@
 /* src/styles/theme.css */
 
-/* ==================== Midnight Blue Theme ==================== */
+/* ==================== Dark Mode ==================== */
 
-/* Dark Mode */
-:root[data-color-scheme="midnight-blue"],
-:root[data-color-scheme="midnight-blue"][data-theme="dark"] {
+:root[data-theme="dark"] {
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
@@ -23,8 +21,9 @@
   --warning: #f59e0b;
 }
 
-/* Light Mode */
-:root[data-color-scheme="midnight-blue"][data-theme="light"] {
+/* ==================== Light Mode ==================== */
+
+:root[data-theme="light"] {
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
@@ -35,46 +34,12 @@
   --text-muted: #64748b;
   --border: #e2e8f0;
   --border-light: #f1f5f9;
-}
-
-
-/* ==================== Slate Gray Theme ==================== */
-
-/* Dark Mode */
-:root[data-color-scheme="slate-gray"],
-:root[data-color-scheme="slate-gray"][data-theme="dark"] {
-  --bg-primary: #18181b;
-  --bg-secondary: #27272a;
-  --bg-tertiary: #3f3f46;
-  --bg-hover: rgba(255, 255, 255, 0.05);
-  --bg-active: rgba(161, 161, 170, 0.15);
-  --text-primary: #fafafa;
-  --text-secondary: #e4e4e7;
-  --text-muted: #a1a1aa;
-  --border: #3f3f46;
-  --border-light: #27272a;
-  --accent: #a1a1aa;
-  --accent-hover: #d4d4d8;
-  --accent-bg: rgba(161, 161, 170, 0.15);
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-bg: rgba(59, 130, 246, 0.15);
   --success: #22c55e;
   --error: #ef4444;
   --warning: #f59e0b;
-}
-
-/* Light Mode */
-:root[data-color-scheme="slate-gray"][data-theme="light"] {
-  --bg-primary: #fafafa;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f4f4f5;
-  --bg-hover: rgba(0, 0, 0, 0.04);
-  --bg-active: rgba(113, 113, 122, 0.1);
-  --text-primary: #18181b;
-  --text-secondary: #27272a;
-  --text-muted: #71717a;
-  --border: #e4e4e7;
-  --border-light: #f4f4f5;
-  --accent: #71717a;
-  --accent-hover: #52525b;
 }
 
 
@@ -85,6 +50,47 @@
   --second-sidebar-width: 200px;
   --tab-bar-height: 36px;
   --border-radius: 6px;
+}
+
+
+/* ==================== Glassmorphism Variables ==================== */
+
+/* Dark Mode Glassmorphism */
+:root[data-theme="dark"] {
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-hover: rgba(255, 255, 255, 0.12);
+  --glass-bg-active: rgba(59, 130, 246, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-focus: rgba(59, 130, 246, 0.4);
+  --glass-blur: 12px;
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+
+  /* Text colors with better contrast for glass backgrounds */
+  --text-primary: #ffffff;
+  --text-secondary: #f1f5f9;
+  --text-muted: #cbd5e1;
+
+  /* Background Gradient for Glassmorphism */
+  --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+/* Light Mode Glassmorphism */
+:root[data-theme="light"] {
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-bg-hover: rgba(255, 255, 255, 0.95);
+  --glass-bg-active: rgba(59, 130, 246, 0.15);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-border-focus: rgba(59, 130, 246, 0.3);
+  --glass-blur: 12px;
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+
+  /* Text colors with better contrast for glass backgrounds - Light */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  /* Background Gradient for Glassmorphism - Light */
+  --bg-gradient: linear-gradient(135deg, #a5b4fc 0%, #c7d2fe 50%, #e0e7ff 100%);
 }
 
 

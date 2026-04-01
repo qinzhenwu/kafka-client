@@ -199,7 +199,9 @@ const handleClose = () => {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,9 +210,12 @@ const handleClose = () => {
 
 .modal-container {
   width: 480px;
-  background: var(--bg-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
 }
 
@@ -219,7 +224,7 @@ const handleClose = () => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .header-title {
@@ -229,6 +234,7 @@ const handleClose = () => {
   font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .header-icon {
@@ -266,6 +272,7 @@ const handleClose = () => {
   color: var(--text-secondary);
   flex-shrink: 0;
   padding-top: 6px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .required {
@@ -283,6 +290,7 @@ const handleClose = () => {
 .partition-hint {
   font-size: 12px;
   color: var(--text-muted);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .hint-note {
@@ -311,12 +319,13 @@ const handleClose = () => {
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
 }
 
 .footer-hint {
   font-size: 12px;
   color: var(--text-muted);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .footer-actions {
@@ -352,5 +361,75 @@ const handleClose = () => {
 .action-btn.primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Light Mode */
+:root[data-theme="light"] .modal-overlay {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="light"] .modal-container {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .modal-header {
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .header-title {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .header-icon {
+  color: #3b82f6;
+}
+
+:root[data-theme="light"] .header-close {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .header-close:hover {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .form-label {
+  color: #64748b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .partition-hint {
+  color: #64748b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .modal-footer {
+  border-top: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .footer-hint {
+  color: #64748b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .action-btn {
+  background: rgba(59, 130, 246, 0.1);
+  color: #475569;
+}
+
+:root[data-theme="light"] .action-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .action-btn.primary {
+  background: #3b82f6;
+  color: white;
+}
+
+:root[data-theme="light"] .action-btn.primary:hover {
+  background: #2563eb;
 }
 </style>

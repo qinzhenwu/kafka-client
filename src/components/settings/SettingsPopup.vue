@@ -35,9 +35,12 @@ const appVersion = '0.2.11'
 <style scoped>
 .settings-popup {
   width: 200px;
-  background: var(--bg-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--glass-shadow);
   overflow: hidden;
 }
 
@@ -45,7 +48,7 @@ const appVersion = '0.2.11'
   padding: 8px 12px;
   font-size: 11px;
   color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .popup-list {
@@ -63,7 +66,7 @@ const appVersion = '0.2.11'
 }
 
 .popup-item:hover {
-  background: var(--bg-hover);
+  background: var(--glass-bg-hover);
 }
 
 .item-text {
@@ -74,5 +77,29 @@ const appVersion = '0.2.11'
 .item-version {
   font-size: 11px;
   color: var(--text-muted);
+}
+
+/* Light Mode */
+:root[data-theme="light"] .settings-popup {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .popup-header {
+  color: #64748b;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .popup-item {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .popup-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+:root[data-theme="light"] .item-version {
+  color: #64748b;
 }
 </style>

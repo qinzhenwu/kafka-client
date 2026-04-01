@@ -320,11 +320,16 @@ themeStore.initTheme()
   </n-config-provider>
 </template>
 
+<style>
+/* Import Glassmorphism styles */
+@import '@/styles/glass.css';
+</style>
+
 <style scoped>
 .app-layout {
   display: flex;
   height: 100vh;
-  background: var(--bg-primary);
+  background: var(--bg-gradient);
 }
 
 .main-area {
@@ -338,6 +343,8 @@ themeStore.initTheme()
   flex: 1;
   overflow: auto;
   padding: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .welcome-state {
@@ -374,5 +381,22 @@ themeStore.initTheme()
   position: absolute;
   left: calc(var(--icon-sidebar-width) + 8px);
   bottom: 70px;
+}
+
+/* Light Mode */
+:root[data-theme="light"] .app-layout {
+  background: linear-gradient(135deg, #a5b4fc 0%, #c7d2fe 50%, #e0e7ff 100%);
+}
+
+:root[data-theme="light"] .welcome-state {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .welcome-icon {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .welcome-text {
+  color: #475569;
 }
 </style>

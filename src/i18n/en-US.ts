@@ -49,6 +49,8 @@ export default {
     testFailed: 'Connection test failed',
     connectSuccess: 'Cluster connected successfully',
     connectFailed: 'Failed to connect',
+    disconnectSuccess: 'Cluster disconnected',
+    disconnectFailed: 'Failed to disconnect',
     reconnectSuccess: 'Cluster reconnected successfully',
     reconnect: 'Reconnect',
     save: 'Save',
@@ -185,11 +187,9 @@ export default {
     search: 'Search',
     toggleTheme: 'Toggle Theme',
     switchLanguage: 'Switch Language',
-    selectTheme: 'Select Color Scheme'
+    selectTheme: 'Toggle Theme'
   },
   theme: {
-    mode: 'Mode',
-    colorScheme: 'Color Scheme',
     light: 'Light',
     dark: 'Dark',
     system: 'System'

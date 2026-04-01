@@ -3,16 +3,14 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTabStore, type Tab } from '@/stores/tabs'
-import { useThemeStore, type ColorScheme, type ThemeMode } from '@/stores/theme'
+import { useThemeStore } from '@/stores/theme'
 import { icons } from '@/config/icons'
-import { X, Palette, Sun, Moon, Monitor, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { X, Sun, Moon, Monitor, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 
 const { t, locale } = useI18n()
 const tabStore = useTabStore()
 const themeStore = useThemeStore()
 
-const showThemeMenu = ref(false)
-const themeMenuRef = ref<HTMLElement | null>(null)
 const tabsContainerRef = ref<HTMLElement | null>(null)
 
 const showLeftArrow = ref(false)
@@ -21,17 +19,6 @@ const showRightArrow = ref(false)
 const emit = defineEmits<{
   toggleLocale: []
 }>()
-
-const colorSchemes: { value: ColorScheme; label: string }[] = [
-  { value: 'midnight-blue', label: 'Midnight Blue' },
-  { value: 'slate-gray', label: 'Slate Gray' },
-]
-
-const themeModes: { value: ThemeMode; label: string; icon: any }[] = [
-  { value: 'light', label: 'Light', icon: Sun },
-  { value: 'dark', label: 'Dark', icon: Moon },
-  { value: 'system', label: 'System', icon: Monitor },
-]
 
 const currentModeIcon = computed(() => {
   switch (themeStore.mode) {
@@ -56,20 +43,6 @@ const handleToggleTheme = () => {
 
 const handleToggleLocale = () => {
   emit('toggleLocale')
-}
-
-const handleSelectColorScheme = (scheme: ColorScheme) => {
-  themeStore.setColorScheme(scheme)
-}
-
-const handleSelectMode = (mode: ThemeMode) => {
-  themeStore.setMode(mode)
-}
-
-const handleClickOutside = (event: MouseEvent) => {
-  if (themeMenuRef.value && !themeMenuRef.value.contains(event.target as Node)) {
-    showThemeMenu.value = false
-  }
 }
 
 // Check if arrows should be shown
@@ -119,7 +92,6 @@ watch(() => tabStore.activeContentTabId, () => {
 })
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
   if (tabsContainerRef.value) {
     tabsContainerRef.value.addEventListener('scroll', checkArrows)
   }
@@ -127,7 +99,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
   if (tabsContainerRef.value) {
     tabsContainerRef.value.removeEventListener('scroll', checkArrows)
   }
@@ -169,47 +140,6 @@ onUnmounted(() => {
     </button>
 
     <div class="tab-actions">
-      <div class="theme-selector" ref="themeMenuRef">
-        <button
-          class="theme-scheme-btn"
-          :title="t('tooltip.selectTheme')"
-          @click="showThemeMenu = !showThemeMenu"
-        >
-          <Palette :size="14" :stroke-width="1.5" />
-        </button>
-        <div v-if="showThemeMenu" class="theme-menu">
-          <!-- Mode Selection -->
-          <div class="theme-section">
-            <div class="theme-section-title">{{ t('theme.mode') }}</div>
-            <div class="theme-modes">
-              <button
-                v-for="mode in themeModes"
-                :key="mode.value"
-                class="theme-mode-btn"
-                :class="{ active: themeStore.mode === mode.value }"
-                @click="handleSelectMode(mode.value)"
-              >
-                <component :is="mode.icon" :size="14" />
-                <span>{{ mode.label }}</span>
-              </button>
-            </div>
-          </div>
-          <!-- Color Scheme Selection -->
-          <div class="theme-section">
-            <div class="theme-section-title">{{ t('theme.colorScheme') }}</div>
-            <div
-              v-for="scheme in colorSchemes"
-              :key="scheme.value"
-              class="theme-menu-item"
-              :class="{ active: themeStore.colorScheme === scheme.value }"
-              @click="handleSelectColorScheme(scheme.value)"
-            >
-              <span class="color-preview" :class="scheme.value"></span>
-              <span>{{ scheme.label }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
       <button
         class="theme-mode-toggle"
         :title="t('tooltip.toggleTheme')"
@@ -230,11 +160,15 @@ onUnmounted(() => {
 
 <style scoped>
 .tab-bar {
+  position: relative;
   display: flex;
   align-items: center;
   height: var(--tab-bar-height);
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 100;
 }
 
 .tabs-container {
@@ -256,7 +190,7 @@ onUnmounted(() => {
   justify-content: center;
   width: 24px;
   height: 100%;
-  background: var(--bg-tertiary);
+  background: var(--glass-bg);
   border: none;
   color: var(--text-muted);
   cursor: pointer;
@@ -265,16 +199,16 @@ onUnmounted(() => {
 }
 
 .tab-arrow:hover {
-  background: var(--bg-hover);
+  background: var(--glass-bg-hover);
   color: var(--text-secondary);
 }
 
 .tab-arrow.left {
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--glass-border);
 }
 
 .tab-arrow.right {
-  border-left: 1px solid var(--border);
+  border-left: 1px solid var(--glass-border);
 }
 
 .tab {
@@ -282,7 +216,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  background: var(--bg-tertiary);
+  background: var(--glass-bg);
   color: var(--text-muted);
   font-size: 13px;
   cursor: pointer;
@@ -292,12 +226,12 @@ onUnmounted(() => {
 }
 
 .tab:hover {
-  background: var(--bg-secondary);
+  background: var(--glass-bg-hover);
   color: var(--text-secondary);
 }
 
 .tab.active {
-  background: var(--bg-primary);
+  background: var(--glass-bg-active);
   color: var(--text-primary);
   border-bottom: 2px solid var(--accent);
 }
@@ -310,6 +244,7 @@ onUnmounted(() => {
   max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .tab-close {
@@ -330,7 +265,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 4px;
   padding: 0 8px;
-  border-left: 1px solid var(--border);
+  border-left: 1px solid var(--glass-border);
 }
 
 .locale-btn {
@@ -343,98 +278,12 @@ onUnmounted(() => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .locale-btn:hover {
   background: var(--bg-hover);
   color: var(--text-secondary);
-}
-
-.theme-selector {
-  position: relative;
-}
-
-.theme-scheme-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: transparent;
-  border: none;
-  border-radius: var(--border-radius);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.theme-scheme-btn:hover {
-  background: var(--bg-hover);
-  color: var(--text-secondary);
-}
-
-.theme-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 4px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 180px;
-  z-index: 100;
-  overflow: hidden;
-}
-
-.theme-section {
-  padding: 8px 0;
-}
-
-.theme-section:not(:last-child) {
-  border-bottom: 1px solid var(--border);
-}
-
-.theme-section-title {
-  padding: 4px 14px;
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.theme-modes {
-  display: flex;
-  gap: 4px;
-  padding: 0 10px;
-}
-
-.theme-mode-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 4px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--border-radius);
-  color: var(--text-muted);
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.theme-mode-btn:hover {
-  background: var(--bg-hover);
-  color: var(--text-secondary);
-  border-color: var(--text-muted);
-}
-
-.theme-mode-btn.active {
-  background: var(--accent-bg);
-  color: var(--accent);
-  border-color: var(--accent);
 }
 
 .theme-mode-toggle {
@@ -456,39 +305,80 @@ onUnmounted(() => {
   color: var(--text-secondary);
 }
 
-.theme-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  color: var(--text-secondary);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.15s ease;
+/* Light Mode */
+:root[data-theme="light"] .tab-bar {
+  background: rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.theme-menu-item:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+:root[data-theme="light"] .tab-arrow {
+  background: rgba(255, 255, 255, 0.6);
+  color: #64748b;
 }
 
-.theme-menu-item.active {
-  background: var(--accent-bg);
-  color: var(--accent);
+:root[data-theme="light"] .tab-arrow:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #475569;
 }
 
-.color-preview {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
+:root[data-theme="light"] .tab-arrow.left {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.color-preview.midnight-blue {
-  background: linear-gradient(135deg, #0f172a 50%, #3b82f6 50%);
+:root[data-theme="light"] .tab-arrow.right {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.color-preview.slate-gray {
-  background: linear-gradient(135deg, #18181b 50%, #a1a1aa 50%);
+:root[data-theme="light"] .tab {
+  background: rgba(255, 255, 255, 0.4);
+  color: #64748b;
+}
+
+:root[data-theme="light"] .tab:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #475569;
+}
+
+:root[data-theme="light"] .tab.active {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1e293b;
+  border-bottom: 2px solid #3b82f6;
+}
+
+:root[data-theme="light"] .tab-title {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .tab-close {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .tab-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .tab-actions {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .locale-btn {
+  color: #64748b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .locale-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #475569;
+}
+
+:root[data-theme="light"] .theme-mode-toggle {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .theme-mode-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #475569;
 }
 </style>

@@ -139,8 +139,10 @@ async function closeClusterTab(tab: ClusterTab) {
 .cluster-tab-bar {
   display: flex;
   justify-content: center;
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--glass-border);
   height: 36px;
 }
 
@@ -160,7 +162,7 @@ async function closeClusterTab(tab: ClusterTab) {
   color: var(--text-muted);
   font-size: 13px;
   cursor: pointer;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--glass-border);
   transition: all 0.15s ease;
   position: relative;
   min-width: 0;
@@ -171,12 +173,12 @@ async function closeClusterTab(tab: ClusterTab) {
 }
 
 .cluster-tab:hover {
-  background: var(--bg-hover);
+  background: var(--glass-bg-hover);
   color: var(--text-secondary);
 }
 
 .cluster-tab.active {
-  background: var(--bg-primary);
+  background: var(--glass-bg-active);
   color: var(--text-primary);
   border-bottom: 2px solid var(--accent);
 }
@@ -204,6 +206,7 @@ async function closeClusterTab(tab: ClusterTab) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .close-btn {
@@ -223,5 +226,41 @@ async function closeClusterTab(tab: ClusterTab) {
 .close-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
+}
+
+/* Light Mode */
+:root[data-theme="light"] .cluster-tab-bar {
+  background: rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .cluster-tab {
+  color: #64748b;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .cluster-tab:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #475569;
+}
+
+:root[data-theme="light"] .cluster-tab.active {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1e293b;
+  border-bottom: 2px solid #3b82f6;
+}
+
+:root[data-theme="light"] .cluster-name {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .close-btn {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #1e293b;
 }
 </style>

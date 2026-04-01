@@ -236,6 +236,7 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
   font-size: 18px;
   font-weight: 500;
   color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .header-actions {
@@ -251,9 +252,12 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
 
 .stat-card {
   flex: 1;
-  background: var(--bg-tertiary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   padding: 14px 18px;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 .stat-label {
@@ -261,11 +265,13 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
   font-size: 11px;
   color: var(--text-muted);
   margin-bottom: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .stat-value {
   font-size: 22px;
   color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .section {
@@ -276,6 +282,7 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
   font-size: 14px;
   color: var(--text-secondary);
   margin: 0 0 12px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .empty-state {
@@ -283,14 +290,20 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
   font-size: 13px;
   padding: 24px;
   text-align: center;
-  background: var(--bg-tertiary);
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
 }
 
 .members-table,
 .lag-table {
-  background: var(--bg-tertiary);
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -329,16 +342,20 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
 }
 
 .table-header {
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--text-muted);
   font-size: 12px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .table-row {
   color: var(--text-secondary);
   font-size: 13px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--glass-border);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .table-row:last-child {
@@ -354,26 +371,30 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
   justify-content: space-between;
   align-items: center;
   padding: 10px 16px;
-  background: var(--bg-secondary);
-  border-radius: 8px 8px 0 0;
-  border: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-bottom: none;
+  border-radius: 12px 12px 0 0;
 }
 
 .topic-name {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .topic-lag {
   font-size: 13px;
   color: var(--accent);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .topic-group .lag-table {
-  border-radius: 0 0 8px 8px;
-  border: 1px solid var(--border);
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--glass-border);
   border-top: none;
 }
 
@@ -410,5 +431,100 @@ watch(() => props.tab.params.groupId, (newId, oldId) => {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Light Mode */
+:root[data-theme="light"] .consumer-group-detail {
+  background: transparent;
+}
+
+:root[data-theme="light"] .title-icon {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .title-text {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .stat-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .stat-label {
+  color: #64748b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .stat-value {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .section-title {
+  color: #475569;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .empty-state {
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .members-table,
+:root[data-theme="light"] .lag-table {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .table-header {
+  background: rgba(0, 0, 0, 0.03);
+  color: #64748b;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .table-row {
+  color: #475569;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .partition-chip {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+:root[data-theme="light"] .no-assignment {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .topic-header {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .topic-name {
+  color: #1e293b;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .topic-lag {
+  color: #3b82f6;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .topic-group .lag-table {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .loading-overlay {
+  background: transparent;
+}
+
+:root[data-theme="light"] .loading-text {
+  color: #64748b;
 }
 </style>

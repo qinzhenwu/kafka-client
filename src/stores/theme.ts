@@ -1,17 +1,14 @@
 import { defineStore } from 'pinia'
 
 export type ThemeMode = 'light' | 'dark' | 'system'
-export type ColorScheme = 'midnight-blue' | 'slate-gray'
 
 interface ThemeState {
   mode: ThemeMode
-  colorScheme: ColorScheme
 }
 
 export const useThemeStore = defineStore('theme', {
   state: (): ThemeState => ({
     mode: (localStorage.getItem('theme-mode') as ThemeMode) || 'system',
-    colorScheme: (localStorage.getItem('theme-color-scheme') as ColorScheme) || 'midnight-blue',
   }),
 
   getters: {
@@ -43,16 +40,9 @@ export const useThemeStore = defineStore('theme', {
       this.setMode(modes[(currentIndex + 1) % modes.length])
     },
 
-    setColorScheme(scheme: ColorScheme) {
-      this.colorScheme = scheme
-      localStorage.setItem('theme-color-scheme', scheme)
-      this.applyTheme()
-    },
-
     applyTheme() {
       const actualMode = this.actualMode
       document.documentElement.setAttribute('data-theme', actualMode)
-      document.documentElement.setAttribute('data-color-scheme', this.colorScheme)
     },
 
     initTheme() {

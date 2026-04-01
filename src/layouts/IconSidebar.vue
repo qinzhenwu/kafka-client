@@ -109,12 +109,14 @@ const handleNavClick = (key: string) => {
 .icon-sidebar {
   width: var(--icon-sidebar-width);
   height: 100%;
-  background: var(--bg-tertiary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 12px 0;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--glass-border);
 }
 
 .nav-icons {
@@ -128,7 +130,7 @@ const handleNavClick = (key: string) => {
 
 .cluster-switcher {
   padding-top: 12px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
 }
 
 .bottom-section {
@@ -137,7 +139,7 @@ const handleNavClick = (key: string) => {
   align-items: center;
   gap: 8px;
   padding-top: 12px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
 }
 
 .settings-btn {
@@ -149,12 +151,14 @@ const handleNavClick = (key: string) => {
   cursor: pointer;
   color: var(--text-muted);
   transition: all 0.15s ease;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .settings-btn:hover {
-  background: var(--bg-hover);
+  background: var(--glass-bg-hover);
   color: var(--text-primary);
 }
 
@@ -170,12 +174,14 @@ const handleNavClick = (key: string) => {
   border-radius: var(--border-radius);
   cursor: pointer;
   position: relative;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .cluster-icon:hover {
-  background: var(--bg-hover);
+  background: var(--glass-bg-hover);
 }
 
 .cluster-emoji {
@@ -190,6 +196,7 @@ const handleNavClick = (key: string) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .status-dot {
@@ -207,5 +214,40 @@ const handleNavClick = (key: string) => {
 
 .status-dot.disconnected {
   background: var(--error);
+}
+
+/* Light Mode */
+:root[data-theme="light"] .icon-sidebar {
+  background: rgba(255, 255, 255, 0.6);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .bottom-section {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .settings-btn {
+  color: #64748b;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+:root[data-theme="light"] .settings-btn:hover {
+  background: rgba(255, 255, 255, 0.7);
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .cluster-icon {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+:root[data-theme="light"] .cluster-icon:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+:root[data-theme="light"] .cluster-name {
+  color: #64748b;
+  text-shadow: none;
 }
 </style>

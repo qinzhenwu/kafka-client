@@ -5,13 +5,15 @@ import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { useClusterStore } from '@/stores/cluster'
 import { useTabStore } from '@/stores/tabs'
+import { useMessageStore } from '@/stores/message'
 import { focusClusterWindow } from '@/utils/window'
-import { Loader2 } from 'lucide-vue-next'
+import { Loader2, Link2Off } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const message = useMessage()
 const clusterStore = useClusterStore()
 const tabStore = useTabStore()
+const messageStore = useMessageStore()
 
 const emit = defineEmits<{
   close: []
@@ -106,6 +108,52 @@ const handleOpenManager = () => {
   emit('open-manager')
   emit('close')
 }
+
+const disconnectingClusterId = ref<string | null>(null)
+
+const handleDisconnect = async (clusterId: string, event: Event) => {
+  // 阻止事件冒泡，避免触发 handleSwitchCluster
+  event.stopPropagation()
+
+  const cluster = clusterStore.clusters.find(c => c.id === clusterId)
+  if (!cluster || !cluster.connected || !cluster.clientId) return
+
+  disconnectingClusterId.value = clusterId
+  const clientId = cluster.clientId
+
+  try {
+    console.log('[ClusterSwitch] Disconnecting cluster:', clientId)
+
+    // 1. 停止该集群的所有实时消费
+    const clusterTab = tabStore.clusterTabs.find(t => t.clientId === clientId)
+    if (clusterTab && messageStore.isStreaming && messageStore.streamTopic) {
+      // 检查正在消费的 topic 是否属于该集群
+      const hasMessageTab = clusterTab.contentTabs.some(t =>
+        t.type === 'message' && t.params.topicName === messageStore.streamTopic
+      )
+      if (hasMessageTab) {
+        console.log('[ClusterSwitch] Stopping realtime consume for topic:', messageStore.streamTopic)
+        await messageStore.stopRealtimeConsume(clientId, messageStore.streamTopic)
+      }
+    }
+
+    // 2. 断开集群连接
+    await clusterStore.disconnectCluster(clientId)
+    console.log('[ClusterSwitch] Cluster disconnected')
+
+    // 3. 关闭对应的集群 Tab
+    const tabId = `cluster-${clientId}`
+    tabStore.removeClusterTab(tabId)
+    console.log('[ClusterSwitch] Cluster tab removed')
+
+    message.success(t('cluster.disconnectSuccess'))
+  } catch (e) {
+    console.error('[ClusterSwitch] Failed to disconnect:', e)
+    message.error(t('cluster.disconnectFailed') + ': ' + String(e))
+  } finally {
+    disconnectingClusterId.value = null
+  }
+}
 </script>
 
 <template>
@@ -136,6 +184,15 @@ const handleOpenManager = () => {
           </span>
           <span class="cluster-name">{{ cluster.name }}</span>
           <Loader2 v-if="connectingClusterId === cluster.id" :size="14" class="loading-spinner-right" />
+          <button
+            v-if="cluster.connected && disconnectingClusterId !== cluster.id"
+            class="disconnect-btn"
+            :title="t('cluster.disconnect')"
+            @click="handleDisconnect(cluster.id, $event)"
+          >
+            <Link2Off :size="12" />
+          </button>
+          <Loader2 v-if="disconnectingClusterId === cluster.id" :size="12" class="loading-spinner-right" />
         </div>
       </div>
 
@@ -158,9 +215,12 @@ const handleOpenManager = () => {
 <style scoped>
 .cluster-switch {
   width: 200px;
-  background: var(--bg-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--glass-shadow);
   overflow: hidden;
 }
 
@@ -168,7 +228,7 @@ const handleOpenManager = () => {
   padding: 8px 12px;
   font-size: 11px;
   color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .cluster-list {
@@ -183,11 +243,11 @@ const handleOpenManager = () => {
 }
 
 .cluster-item:hover {
-  background: var(--bg-hover);
+  background: var(--glass-bg-hover);
 }
 
 .cluster-item.active {
-  background: var(--bg-tertiary);
+  background: var(--glass-bg-active);
   border-left: 2px solid var(--accent);
 }
 
@@ -225,6 +285,25 @@ const handleOpenManager = () => {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.disconnect-btn {
+  margin-left: auto;
+  padding: 4px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.disconnect-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
 }
 
 .loading-spinner {
@@ -275,14 +354,14 @@ const handleOpenManager = () => {
   align-items: center;
   gap: 6px;
   padding: 10px 12px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
   cursor: pointer;
   color: var(--accent);
   transition: background 0.15s ease;
 }
 
 .switch-footer:hover {
-  background: var(--bg-hover);
+  background: var(--glass-bg-hover);
 }
 
 .footer-icon {
@@ -293,5 +372,79 @@ const handleOpenManager = () => {
 
 .footer-text {
   font-size: 13px;
+}
+
+/* Light Mode */
+:root[data-theme="light"] .cluster-switch {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .switch-header {
+  color: #64748b;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .cluster-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+:root[data-theme="light"] .cluster-item.active {
+  background: rgba(59, 130, 246, 0.15);
+  border-left: 2px solid #3b82f6;
+}
+
+:root[data-theme="light"] .status-dot.connected {
+  background: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+}
+
+:root[data-theme="light"] .status-dot.disconnected {
+  background: #94a3b8;
+  box-shadow: none;
+}
+
+:root[data-theme="light"] .status-text {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .loading-spinner,
+:root[data-theme="light"] .loading-spinner-right {
+  color: #3b82f6;
+}
+
+:root[data-theme="light"] .cluster-icon {
+  color: #3b82f6;
+}
+
+:root[data-theme="light"] .cluster-name {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .disconnect-btn {
+  color: #ef4444;
+}
+
+:root[data-theme="light"] .disconnect-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+:root[data-theme="light"] .empty-list {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .switch-footer {
+  border-top: 1px solid rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+:root[data-theme="light"] .switch-footer:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+:root[data-theme="light"] .footer-text {
+  color: #3b82f6;
 }
 </style>

@@ -51,7 +51,9 @@ const handleClose = () => {
 .about-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,9 +62,12 @@ const handleClose = () => {
 
 .about-dialog {
   width: 320px;
-  background: var(--bg-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
 }
 
@@ -71,7 +76,7 @@ const handleClose = () => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .dialog-title {
@@ -146,5 +151,53 @@ const handleClose = () => {
 
 .btn-primary:hover {
   background: var(--accent-hover);
+}
+
+/* Light Mode */
+:root[data-theme="light"] .about-overlay {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="light"] .about-dialog {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .dialog-header {
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+:root[data-theme="light"] .dialog-title {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .dialog-close {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .dialog-close:hover {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .app-name {
+  color: #1e293b;
+}
+
+:root[data-theme="light"] .app-version {
+  color: #64748b;
+}
+
+:root[data-theme="light"] .app-desc {
+  color: #475569;
+}
+
+:root[data-theme="light"] .btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+:root[data-theme="light"] .btn-primary:hover {
+  background: #2563eb;
 }
 </style>
