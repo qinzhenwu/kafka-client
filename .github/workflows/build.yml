@@ -21,10 +21,16 @@ jobs:
         include:
           - platform: 'macos-latest'
             args: '--target aarch64-apple-darwin'
+            target: 'aarch64-apple-darwin'
+          - platform: 'macos-latest'
+            args: '--target x86_64-apple-darwin'
+            target: 'x86_64-apple-darwin'
           - platform: 'windows-latest'
             args: ''
+            target: ''
           - platform: 'ubuntu-22.04'
             args: ''
+            target: ''
 
     runs-on: ${{ matrix.platform }}
     permissions:
@@ -58,7 +64,7 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || '' }}
+          targets: ${{ matrix.target }}
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -85,7 +91,8 @@ jobs:
             - **Linux**: Ubuntu 18.04+ 或其他主流发行版
 
             ### Downloads
-            - **macOS (Apple Silicon)**: Download the `.app.tar.gz` file
+            - **macOS (Apple Silicon M1/M2/M3)**: Download the `KafkaClient_aarch64.app.tar.gz` file
+            - **macOS (Intel)**: Download the `KafkaClient_x64.app.tar.gz` file
             - **Windows**: Download the `.msi` or `.exe` file
             - **Linux**: Download the `.AppImage` or `.deb` file
 
