@@ -255,7 +255,7 @@ const handleClose = () => {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -263,6 +263,7 @@ const handleClose = () => {
 }
 
 .modal-container {
+  pointer-events: auto;
   width: 600px;
   max-width: 95vw;
   max-height: 90vh;
