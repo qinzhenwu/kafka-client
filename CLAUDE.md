@@ -28,6 +28,11 @@ cd src-tauri && cargo check
 cd src-tauri && cargo test
 ```
 
+## Prerequisites
+
+- Node.js 18+
+- Rust 1.70+
+
 ## Docker Test Environment
 
 ```bash
@@ -60,7 +65,7 @@ src-tauri/src/
 - Each `KafkaClient` contains admin, consumer, and producer instances
 - Injected into Tauri via `.manage()` for command access
 
-**Streaming**: Real-time consumption uses `StreamingSessions` (also `Arc<RwLock<HashMap>>`) to track active streams and allow stopping by session_id.
+**Streaming**: Real-time consumption uses `StreamingSessions` (also `Arc<RwLock<HashMap>>`) to track active streams and allow stopping by session_id. The backend emits `kafka-message` events via `app_handle.emit("kafka-message", msg)`; frontend listens via `listen<KafkaMessage>('kafka-message', (event) => ...)`.
 
 **PartitionInfo**: Includes `leader_host` field (format: "host:port") resolved from broker metadata for displaying broker addresses in topic details.
 
@@ -99,6 +104,14 @@ Commands are registered in `lib.rs` with `tauri::generate_handler![]`.
 - **i18n**: All user-facing strings must use `t('key')` from `vue-i18n`.
 - **Global Dialogs**: For dialogs that persist across tab switches, store state in Pinia store and render in App.vue instead of component-local state.
 - **Icon Sizes**: Close buttons use `:size="18"`, inline icons use `:size="14"`, sidebar icons use `:size="22"`.
+
+## Security Configuration
+
+Supported security protocols: `PLAINTEXT`, `SSL`, `SASL_PLAINTEXT`, `SASL_SSL`
+
+Supported SASL mechanisms: `PLAIN`, `SCRAM_SHA_256`, `SCRAM_SHA_512`, `GSSAPI`
+
+Frontend types (`ClusterConfig`) and Rust structs share identical field names for seamless serialization via `serde_json`.
 
 ## UI Components
 
