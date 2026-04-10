@@ -9,6 +9,8 @@ export interface KafkaMessage {
   value: string | null
   headers: Record<string, string>
   timestamp: string
+  // Cached timestamp number for efficient sorting (optional, added during processing)
+  timestampNum?: number
 }
 
 export interface ProduceRequest {
@@ -165,9 +167,9 @@ export const useMessageStore = defineStore('message', {
       // Clear messages
       this.messages = []
 
-      // Set up event listener
-      this.unlisten = await listen<KafkaMessage>('kafka-message', (event) => {
-        this.addMessage(event.payload)
+      // Set up event listener for batch messages
+      this.unlisten = await listen<KafkaMessage[]>('kafka-message-batch', (event) => {
+        this.addMessageBatch(event.payload)
       })
 
       // Start streaming
@@ -199,26 +201,67 @@ export const useMessageStore = defineStore('message', {
     },
 
     addMessage(message: KafkaMessage) {
-      // Insert message in the correct position to maintain descending order
-      const newTime = new Date(message.timestamp).getTime()
-      let insertIndex = 0
+      // Single message uses batch processing logic
+      this.addMessageBatch([message])
+    },
 
-      // Find the correct position to insert
-      for (let i = 0; i < this.messages.length; i++) {
-        const existingTime = new Date(this.messages[i].timestamp).getTime()
-        if (newTime > existingTime) {
-          insertIndex = i
-          break
+    /**
+     * Batch add messages using merge algorithm for O(n) performance.
+     * Messages are kept in descending timestamp order with maxMessages limit.
+     */
+    addMessageBatch(messages: KafkaMessage[]) {
+      if (messages.length === 0) return
+
+      // Pre-process: calculate and cache timestamps, sort descending
+      const processed = messages
+        .map(msg => ({
+          ...msg,
+          timestampNum: new Date(msg.timestamp).getTime()
+        }))
+        .sort((a, b) => b.timestampNum! - a.timestampNum!)
+
+      // If current array is empty, directly assign
+      if (this.messages.length === 0) {
+        this.messages = processed.slice(0, this.maxMessages)
+        return
+      }
+
+      // Merge two sorted arrays (both in descending order)
+      // Prepare existing messages with cached timestamps
+      const existing = this.messages.map(msg => ({
+        ...msg,
+        timestampNum: msg.timestampNum ?? new Date(msg.timestamp).getTime()
+      }))
+
+      const merged: KafkaMessage[] = []
+      let i = 0 // new messages index
+      let j = 0 // existing messages index
+
+      // Merge while respecting maxMessages limit
+      while (i < processed.length && j < existing.length && merged.length < this.maxMessages) {
+        if (processed[i].timestampNum! >= existing[j].timestampNum!) {
+          merged.push(processed[i])
+          i++
+        } else {
+          merged.push(existing[j])
+          j++
         }
-        insertIndex = i + 1
       }
 
-      this.messages.splice(insertIndex, 0, message)
-
-      // Keep only the latest maxMessages
-      if (this.messages.length > this.maxMessages) {
-        this.messages = this.messages.slice(0, this.maxMessages)
+      // Add remaining elements from processed (if space available)
+      while (i < processed.length && merged.length < this.maxMessages) {
+        merged.push(processed[i])
+        i++
       }
+
+      // Add remaining elements from existing (if space available)
+      while (j < existing.length && merged.length < this.maxMessages) {
+        merged.push(existing[j])
+        j++
+      }
+
+      // Single Vue reactive update
+      this.messages = merged
     },
 
     clearMessages() {

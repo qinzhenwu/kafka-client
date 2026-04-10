@@ -7,12 +7,47 @@ use std::collections::HashMap;
 use crate::error::{KafkaClientError, Result};
 use crate::models::{KafkaMessage, ConsumeRequest, ConsumeResponse};
 use chrono::{DateTime, Utc};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use tauri::AppHandle;
 use tauri::Emitter;
 
+// Batch emission configuration
+const BATCH_SIZE: usize = 50;
+const BATCH_TIMEOUT_MS: u64 = 100;
+
 // Track active streaming sessions
 pub type StreamingSessions = Arc<RwLock<HashMap<String, bool>>>;
+
+/// Parse a Kafka message into KafkaMessage struct
+fn parse_kafka_message(msg: &rdkafka::message::BorrowedMessage) -> KafkaMessage {
+    let key = msg.key().map(|k| String::from_utf8_lossy(k).to_string());
+    let value = msg.payload().map(|p| String::from_utf8_lossy(p).to_string());
+
+    let mut headers = HashMap::new();
+    if let Some(msg_headers) = msg.headers() {
+        for header in msg_headers.iter() {
+            let h_key = header.key.to_string();
+            let h_value = header.value
+                .map(|v| String::from_utf8_lossy(v).to_string())
+                .unwrap_or_default();
+            headers.insert(h_key, h_value);
+        }
+    }
+
+    let timestamp = msg.timestamp()
+        .to_millis()
+        .map(|ms| DateTime::from_timestamp_millis(ms).unwrap_or_else(Utc::now))
+        .unwrap_or_else(Utc::now);
+
+    KafkaMessage {
+        partition: msg.partition(),
+        offset: msg.offset(),
+        key,
+        value,
+        headers,
+        timestamp,
+    }
+}
 
 pub struct KafkaConsumerOps<'a> {
     consumer: &'a BaseConsumer,
@@ -184,33 +219,7 @@ impl<'a> KafkaConsumerOps<'a> {
     }
 
     fn parse_message(&self, msg: &rdkafka::message::BorrowedMessage) -> Result<KafkaMessage> {
-        let key = msg.key().map(|k| String::from_utf8_lossy(k).to_string());
-        let value = msg.payload().map(|p| String::from_utf8_lossy(p).to_string());
-
-        let mut headers = HashMap::new();
-        if let Some(msg_headers) = msg.headers() {
-            for header in msg_headers.iter() {
-                let key = header.key.to_string();
-                let value = header.value
-                    .map(|v| String::from_utf8_lossy(v).to_string())
-                    .unwrap_or_default();
-                headers.insert(key, value);
-            }
-        }
-
-        let timestamp = msg.timestamp()
-            .to_millis()
-            .map(|ms| DateTime::from_timestamp_millis(ms).unwrap_or_else(Utc::now))
-            .unwrap_or_else(Utc::now);
-
-        Ok(KafkaMessage {
-            partition: msg.partition(),
-            offset: msg.offset(),
-            key,
-            value,
-            headers,
-            timestamp,
-        })
+        Ok(parse_kafka_message(msg))
     }
 }
 
@@ -261,52 +270,54 @@ pub async fn start_streaming_consume(
 
     let timeout = Duration::from_millis(500);
 
+    // Batch emission: buffer messages and emit in batches
+    let mut message_batch: Vec<KafkaMessage> = Vec::with_capacity(BATCH_SIZE);
+    let mut last_emit_time = Instant::now();
+
     // Start polling loop
     loop {
         // Check if session is still active
         {
             let s = sessions.read().await;
             if !s.get(&session_key).unwrap_or(&false) {
+                // Emit remaining messages before stopping
+                if !message_batch.is_empty() {
+                    let _ = app_handle.emit("kafka-message-batch", &message_batch);
+                }
                 break;
             }
         }
 
+        // Check if batch timeout has elapsed
+        let elapsed_ms = last_emit_time.elapsed().as_millis() as u64;
+        if elapsed_ms >= BATCH_TIMEOUT_MS && !message_batch.is_empty() {
+            let _ = app_handle.emit("kafka-message-batch", &message_batch);
+            message_batch.clear();
+            last_emit_time = Instant::now();
+        }
+
         match consumer.poll(timeout) {
             Some(Ok(msg)) => {
-                // Parse message
-                let key = msg.key().map(|k| String::from_utf8_lossy(k).to_string());
-                let value = msg.payload().map(|p| String::from_utf8_lossy(p).to_string());
+                let kafka_msg = parse_kafka_message(&msg);
+                message_batch.push(kafka_msg);
 
-                let mut headers = HashMap::new();
-                if let Some(msg_headers) = msg.headers() {
-                    for header in msg_headers.iter() {
-                        let h_key = header.key.to_string();
-                        let h_value = header.value
-                            .map(|v| String::from_utf8_lossy(v).to_string())
-                            .unwrap_or_default();
-                        headers.insert(h_key, h_value);
-                    }
+                // Emit batch when it reaches the size threshold
+                if message_batch.len() >= BATCH_SIZE {
+                    let _ = app_handle.emit("kafka-message-batch", &message_batch);
+                    message_batch.clear();
+                    last_emit_time = Instant::now();
                 }
-
-                let timestamp = msg.timestamp()
-                    .to_millis()
-                    .map(|ms| DateTime::from_timestamp_millis(ms).unwrap_or_else(Utc::now))
-                    .unwrap_or_else(Utc::now);
-
-                let kafka_msg = KafkaMessage {
-                    partition: msg.partition(),
-                    offset: msg.offset(),
-                    key,
-                    value,
-                    headers,
-                    timestamp,
-                };
-
-                // Emit event to frontend
-                let _ = app_handle.emit("kafka-message", kafka_msg);
             }
             Some(Err(_)) => continue,
-            None => continue,
+            None => {
+                // No message, check if we should emit pending batch
+                if !message_batch.is_empty() && last_emit_time.elapsed().as_millis() as u64 >= BATCH_TIMEOUT_MS {
+                    let _ = app_handle.emit("kafka-message-batch", &message_batch);
+                    message_batch.clear();
+                    last_emit_time = Instant::now();
+                }
+                continue;
+            }
         }
     }
 

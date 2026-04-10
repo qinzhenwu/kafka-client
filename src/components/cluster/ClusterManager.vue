@@ -161,24 +161,28 @@ const clusterCount = computed(() => clusterStore.clusters.length)
       </div>
 
       <!-- Cluster Form Modal -->
-      <ClusterForm
-        :show="showForm"
-        :edit-cluster="editingCluster"
-        @update:show="handleFormClose"
-        @success="handleFormSuccess"
-      />
+      <Teleport to="body">
+        <ClusterForm
+          :show="showForm"
+          :edit-cluster="editingCluster"
+          @update:show="handleFormClose"
+          @success="handleFormSuccess"
+        />
+      </Teleport>
 
       <!-- Delete Confirm Dialog -->
-      <ConfirmDialog
-        :show="showDeleteConfirm"
-        :title="t('cluster.confirmDelete')"
-        :message="t('cluster.deleteConfirmText', { name: pendingDeleteClusterId ? clusterStore.clusters.find(c => c.id === pendingDeleteClusterId)?.name : '' })"
-        :confirm-text="t('common.confirm')"
-        :cancel-text="t('common.cancel')"
-        @confirm="confirmDelete"
-        @cancel="cancelDelete"
-        @close="showDeleteConfirm = false"
-      />
+      <Teleport to="body">
+        <ConfirmDialog
+          :show="showDeleteConfirm"
+          :title="t('cluster.confirmDelete')"
+          :message="t('cluster.deleteConfirmText', { name: pendingDeleteClusterId ? clusterStore.clusters.find(c => c.id === pendingDeleteClusterId)?.name : '' })"
+          :confirm-text="t('common.confirm')"
+          :cancel-text="t('common.cancel')"
+          @confirm="confirmDelete"
+          @cancel="cancelDelete"
+          @close="showDeleteConfirm = false"
+        />
+      </Teleport>
     </div>
   </div>
 </template>

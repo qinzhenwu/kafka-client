@@ -332,7 +332,9 @@ const handleClose = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1100;
+  overflow: auto;
+  padding: 20px;
 }
 
 /* Light Mode */
@@ -429,7 +431,6 @@ const handleClose = () => {
   border: 1px solid var(--glass-border);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  overflow: hidden;
 }
 
 .modal-header {
@@ -438,6 +439,7 @@ const handleClose = () => {
   align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid var(--glass-border);
+  flex-shrink: 0;
 }
 
 .header-title {
@@ -457,7 +459,7 @@ const handleClose = () => {
 .header-close {
   color: var(--text-muted);
   cursor: pointer;
-  padding: 4px;
+  transition: color 0.15s ease;
 }
 
 .header-close:hover {
@@ -465,9 +467,7 @@ const handleClose = () => {
 }
 
 .modal-content {
-  padding: 20px;
-  max-height: 60vh;
-  overflow-y: auto;
+  padding: 16px 20px;
 }
 
 .form-row {
@@ -521,6 +521,7 @@ const handleClose = () => {
   align-items: center;
   padding: 12px 20px;
   border-top: 1px solid var(--glass-border);
+  flex-shrink: 0;
 }
 
 .footer-left {
@@ -553,21 +554,26 @@ const handleClose = () => {
 }
 
 .action-btn {
-  padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.3);
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   color: #e2e8f0;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .action-btn:hover {
-  background: rgba(0, 0, 0, 0.4);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .action-btn.primary {
@@ -583,9 +589,6 @@ const handleClose = () => {
 }
 
 .action-btn.test-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
   background: rgba(59, 130, 246, 0.15);
   border-color: rgba(59, 130, 246, 0.3);
   color: #93c5fd;
@@ -603,9 +606,11 @@ const handleClose = () => {
   color: #86efac;
 }
 
+.action-btn:disabled,
 .action-btn.test-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .action-btn.test-btn .spin {
